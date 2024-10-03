@@ -59,8 +59,8 @@ jobs:
 
             Thanks,
             HelloDock Automation Team
-            server_address: email-smtp.us-east-2.amazonaws.com  # Corrected parameter name
-            server_port: 587                                   # Corrected parameter name
-            username: ${{ secrets.SMTP_USER }}                 # Corrected parameter name
-            password: ${{ secrets.SMTP_PASSWORD }}             # Corrected parameter name
-            secure: true                     
+          server_address: email-smtp.us-east-2.amazonaws.com  # Corrected parameter name
+          server_port: 587                                   # Corrected parameter name
+          username: ${{ secrets.SMTP_USER }}                 # Corrected parameter name
+          password: ${{ secrets.SMTP_PASSWORD }}             # Corrected parameter name
+          secure: true                     
