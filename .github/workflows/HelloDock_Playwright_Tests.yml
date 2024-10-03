@@ -40,6 +40,10 @@ jobs:
           name: test-results
           path: '**/test-results/**'
 
+      - name: Get Build URL
+        run: |
+            echo "The Build URL is: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+  
       # Send email notification after the build completes
       - name: Send email notification
         if: always()  # Ensures email is sent regardless of build success or failure
@@ -54,7 +58,7 @@ jobs:
             The build process for your Playwright TypeScript project has completed. Please check the results.
 
             Build URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
-            
+
             Thanks,
             HelloDock Automation Team
           server_address: email-smtp.us-east-2.amazonaws.com  # Corrected parameter name
