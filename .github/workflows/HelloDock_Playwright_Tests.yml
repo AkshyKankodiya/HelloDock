@@ -40,10 +40,6 @@ jobs:
           name: test-results
           path: '**/test-results/**'
 
-      # Delete the test results folder after uploading it
-      - name: Clean up test results folder
-        run: rm -rf **/test-results/**
-
       # Send email notification after the build completes
       - name: Send email notification
         if: always()  # Ensures email is sent regardless of build success or failure
