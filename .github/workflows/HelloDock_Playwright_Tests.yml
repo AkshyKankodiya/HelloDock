@@ -1,0 +1,59 @@
+name: HelloDock Playwright Tests
+
+on:
+  workflow_dispatch:
+    inputs:
+      choice:
+        type: choice
+        description: Select The Environment URL
+        options:
+          - https://dev.hellodock.com/
+          - https://qa.hellodock.com/
+          - https://app.hellodock.com/
+#  push:
+#    branches: [main]
+#  pull_request:
+#    branches: [main]
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Install Playwright browsers
+        run: npx playwright install
+
+      - name: Run Playwright tests
+        env:
+         BASE_URL: ${{ github.event.inputs.choice }}  # Pass the selected URL to the tests
+        run: npx playwright test || true
+
+       # Always upload screenshots
+      - name: Upload Playwright screenshots
+        uses: actions/upload-artifact@v3
+        with:
+         name: screenshots
+         path: '**/screenshots/**/*.png'
+
+     # Always upload videos
+      - name: Upload Playwright videos
+        uses: actions/upload-artifact@v3
+        with:
+         name: videos
+         path: '**/videos/**/*.webm'
+
+     # Always upload trace files
+      - name: Upload Playwright trace files
+        uses: actions/upload-artifact@v3
+        with:
+         name: traces
+         path: '**/trace.zip'

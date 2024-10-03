@@ -1,0 +1,45 @@
+{
+    "PO1": {
+        "PO_Number": "2065620",
+        "Shipper_Name": "Waffle Waffle",
+        "Shipper_Address": "150 Meadowlands Pkwy, Suite 100, Secaucus, NJ 07094",
+        "Destination_Address": "KEHE DISTRIBUTORS, 2200 N HIMALAYA ROAD, AURORA, CO. 80011",
+        "Shipment_Date": "07.25.23",
+        "Shipment_Weight": "703.64 lbs",
+        "Carrier_Name": "Cold-Link Logistics",
+        "Sign_On_Approval": "YES"
+    },
+    "PO2": {
+        "PO_Number": "2071491",
+        "Shipper_Name": "Kasia's",
+        "Shipper_Address": "440 N. Oakley Blvd., Chicago, IL 60612",
+        "Destination_Address": "KeHE Foods Texas, 4024 Rock Quarry Rd, Dallas TX 75211",
+        "Shipment_Date": "7/24/23",
+        "Shipment_Weight": "750 lbs",
+        "Carrier_Name": "N/A",
+        "Sign_On_Approval": "YES"
+    },
+    "PO3": {
+        "PO_Number": "2070845",
+        "Shipper_Name": "DIANAS BANANAS INC",
+        "Shipper_Address": "2733 W. HARRISON, ALTERNATE, CHICAGO, IL 60612",
+        "Destination_Address": "N/A",
+        "Shipment_Date": "07/26/23",
+        "Shipment_Weight": "714 lbs",
+        "Carrier_Name": "KHEP18 - KeHE Romeoville Fleet",
+        "Sign_On_Approval": "N/A"
+    },
+
+    "New_PO":"2200022",
+    "New_PO1":"3300033",
+    "New_PO2":"4400044",
+    "Rule_PO_PO1":"2071491",
+    "Rule_PO_PO2":"2069174",
+    "Rule_PO_PO4":"2070845",
+    "Rule_PO_PO3":"2078419",
+    "PO_Page_1":"2070845",
+    "PO_Page_2":"KEHE0003987009",
+    "PO_Page_3":"2071491"
+
+
+}
