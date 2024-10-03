@@ -53,6 +53,8 @@ jobs:
 
             The build process for your Playwright TypeScript project has completed. Please check the results.
 
+            Build URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+            
             Thanks,
             HelloDock Automation Team
           server_address: email-smtp.us-east-2.amazonaws.com  # Corrected parameter name
