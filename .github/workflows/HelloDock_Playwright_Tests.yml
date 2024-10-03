@@ -10,10 +10,6 @@ on:
           - https://dev.hellodock.com/
           - https://qa.hellodock.com/
           - https://app.hellodock.com/
-#  push:
-#    branches: [main]
-#  pull_request:
-#    branches: [main]
 
 jobs:
   build:
@@ -34,26 +30,37 @@ jobs:
 
       - name: Run Playwright tests
         env:
-         BASE_URL: ${{ github.event.inputs.choice }}  # Pass the selected URL to the tests
+          BASE_URL: ${{ github.event.inputs.choice }}  # Pass the selected URL to the tests
         run: npx playwright test || true
 
-       # Always upload screenshots
-      - name: Upload Playwright screenshots
+      # Upload the entire test results folder as an artifact
+      - name: Upload Playwright test results
         uses: actions/upload-artifact@v3
         with:
-         name: screenshots
-         path: '**/screenshots/**/*.png'
+          name: test-results
+          path: '**/test-results/**'
 
-     # Always upload videos
-      - name: Upload Playwright videos
-        uses: actions/upload-artifact@v3
-        with:
-         name: videos
-         path: '**/videos/**/*.webm'
+      # Delete the test results folder after uploading it
+      - name: Clean up test results folder
+        run: rm -rf **/test-results/**
 
-     # Always upload trace files
-      - name: Upload Playwright trace files
-        uses: actions/upload-artifact@v3
+      # Send email notification after the build completes
+      - name: Send email notification
+        if: always()  # Ensures email is sent regardless of build success or failure
+        uses: dawidd6/action-send-mail@v3
         with:
-         name: traces
-         path: '**/trace.zip'
+          from: Rahul <no-reply@hellodock.com>
+          to: rahul.trello2020@gmail.com
+          subject: Playwright Build Completed
+          body: |
+            Hello Rahul,
+
+            The build process for your Playwright TypeScript project has completed. Please check the results.
+
+            Thanks,
+            HelloDock Automation Team
+            server_address: email-smtp.us-east-2.amazonaws.com  # Corrected parameter name
+            server_port: 587                                   # Corrected parameter name
+            username: ${{ secrets.SMTP_USER }}                 # Corrected parameter name
+            password: ${{ secrets.SMTP_PASSWORD }}             # Corrected parameter name
+            secure: true                     
