@@ -63,4 +63,4 @@ jobs:
           server_port: 587                                   # Corrected parameter name
           username: ${{ secrets.SMTP_USER }}                 # Corrected parameter name
           password: ${{ secrets.SMTP_PASSWORD }}             # Corrected parameter name
-          secure: true                     
+          secure: false              
