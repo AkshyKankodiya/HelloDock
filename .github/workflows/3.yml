@@ -26,8 +26,8 @@ jobs:
     - name: Install dependencies
       run: npm install
 
-    - name: Install Playwright browsers
-      run: npx playwright install
+   # - name: Install Playwright browsers
+   #   run: npx playwright install
 
     - name: Run Playwright tests
       run: npx playwright test || true
@@ -100,6 +100,6 @@ jobs:
 
     - name: Print Allure Report URL
       run: |
-        echo "Allure report is available at: https://${GITHUB_REPOSITORY_OWNER}.github.io/${GITHUB_REPOSITORY#*/}/"
+        echo "Allure report is available at: https://${{GITHUB_REPOSITORY_OWNER }}.github.io/${{GITHUB_REPOSITORY#*/}}/"
 
       
