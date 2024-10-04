@@ -53,11 +53,14 @@ jobs:
       run: |
         allure generate allure-results --clean -o allure-report
 
+   ## Deploy step      
     - name: Deploy Allure Report to GitHub Pages
       uses: peaceiris/actions-gh-pages@v3
       with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: allure-report
+        github_token: ${{ secrets.GITHUB_TOKEN }} 
+        publish_dir: ./allure-report
+        publish_branch: allure-report
+        keep_files: false
     - name: Print Allure Report URL
       run: |
             echo "Allure report is available at: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/"
