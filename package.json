@@ -6,10 +6,14 @@
 
  
    "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "test:reporter": "playwright test --headed --reporter=allure-playwright",
-    "allure-report": "npx allure generate ./allure-results && allure open"
+   "test": "npx playwright test --reporter=line,allure-playwright"
   },
+  
+    
+    
+  
+  
+  
  
 
   "author": "Rahul Bhutt",
@@ -28,7 +32,10 @@
     "pdf-parse": "^1.1.1",
     "prettier": "^3.0.3",
     "ts-node": "^10.9.2",
-    "typescript": "^5.6.2"
+    "typescript": "^5.6.2",
+    "allure-commandline": "^2.13.9",
+    "ngrok": "^4.0.0",
+    "jq": "^1.6"
   },
   "devDependencies": {
     "@faker-js/faker": "^8.2.0",
