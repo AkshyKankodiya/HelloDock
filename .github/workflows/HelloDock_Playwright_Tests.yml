@@ -70,10 +70,11 @@ jobs:
         run: |
           echo "The Build URL is: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
 
-      # Get Allure report link from the deployment branch
+      # Get Allure report link from the deployment branch and show it in logs
       - name: Allure Report Link
         run: |
           echo "The Allure Report is available at: https://${{ github.repository_owner }}.github.io/${{ github.repository }}/allure-report/"
+          echo "::set-output name=allure_report_url::https://${{ github.repository_owner }}.github.io/${{ github.repository }}/allure-report/"
 
       # Get Artifact download link (zip file of test results)
       - name: Get Artifact Download Link
