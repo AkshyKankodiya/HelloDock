@@ -35,7 +35,6 @@
     "@playwright/test": "^1.47.2",
     "@types/node": "^20.8.6",
     "@types/pdf-parse": "^1.1.4",
-    "allure-commandline": "^2.27.0",
     "allure-playwright": "^2.15.1",
     "playwright": "^1.46.1"
   }
