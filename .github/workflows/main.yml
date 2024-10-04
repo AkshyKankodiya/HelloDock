@@ -1,4 +1,4 @@
-name: HelloDock Playwright Tests
+name: HelloDock Playwright Tests2
 
 on:
   workflow_dispatch:

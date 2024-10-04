@@ -28,7 +28,7 @@ const config: PlaywrightTestConfig = {
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
 
   outputDir: 'test-results/',
-  reporter: [['line'], ['allure-playwright']],
+  reporter: [['allure-playwright', { outputFolder: 'allure-results' }], ['line']],
 
   /*globalSetup: require.resolve('./utils/global-setup'),*/
 
