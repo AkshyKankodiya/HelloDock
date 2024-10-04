@@ -12,7 +12,7 @@ on:
           - https://app.hellodock.com/
 
 jobs:
-  build:
+  test:
     runs-on: windows-latest
 
     steps:
@@ -76,3 +76,33 @@ jobs:
           username: ${{ secrets.SMTP_USER }}
           password: ${{ secrets.SMTP_PASSWORD }}
           secure: false
+
+  allure-report:
+    runs-on: ubuntu-latest
+    needs: test
+
+    steps:
+    - name: Download Allure Results
+      uses: actions/download-artifact@v3
+      with:
+        name: allure-results
+
+    - name: Install Allure
+      run: |
+        npm install -g allure-commandline
+
+    - name: Generate Allure Report
+      run: |
+        allure generate allure-results --clean -o allure-report
+
+   ## Deploy step      
+    - name: Deploy Allure Report to GitHub Pages
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }} 
+        publish_dir: ./allure-report
+        publish_branch: allure-report
+        keep_files: false
+    - name: Print Allure Report URL
+      run: |
+            echo "Allure report is available at: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/"         
