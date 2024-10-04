@@ -33,12 +33,7 @@ jobs:
           BASE_URL: ${{ github.event.inputs.choice }}  # Pass the selected URL to the tests
         run: npx playwright test || true
 
-      # Upload the entire test results folder as an artifact
-      - name: Upload Playwright test results
-        uses: actions/upload-artifact@v3
-        with:
-          name: test-results
-          path: '**/test-results/**'
+     
       
       ## Allure report 
       - name: Generate Allure Report
@@ -54,6 +49,13 @@ jobs:
           publish_dir: ./allure-report
           publish_branch: allure-report
           keep_files: false
+      
+       # Upload the entire test results folder as an artifact
+      - name: Upload Playwright test results
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-results
+          path: '**/test-results/**'
 
       - name: Get Build URL
         run: |
