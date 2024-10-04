@@ -13,7 +13,7 @@ on:
 
 jobs:
   build:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
@@ -42,16 +42,14 @@ jobs:
         run: npm install -g ngrok
 
       - name: Serve Allure Report and expose via ngrok
-        shell: powershell
         run: |
           npx allure generate ./allure-results --clean -o ./allure-report
-          Start-Process -FilePath "npx" -ArgumentList "allure", "serve", "./allure-results"
-          Start-Process -FilePath "ngrok" -ArgumentList "http", "127.0.0.1:5252"
-          Start-Sleep -Seconds 5
-          $ngrokApiUrl = "http://127.0.0.1:4040/api/tunnels"
-          $ngrokUrl = (Invoke-RestMethod -Uri $ngrokApiUrl).tunnels[0].public_url
-          Write-Host "Allure Report is accessible at: $ngrokUrl"
-          echo "::set-output name=allure_report_url::$ngrokUrl"
+          nohup npx allure serve ./allure-results &
+          ngrok http 127.0.0.1:5252 > /dev/null &
+          sleep 5
+          NGROK_URL=$(curl -s localhost:4040/api/tunnels | jq -r '.tunnels[0].public_url')
+          echo "Allure Report is accessible at: $NGROK_URL"
+          echo "::set-output name=allure_report_url::$NGROK_URL"
 
       # Upload the test results folder as an artifact
       - name: Upload Playwright test results
