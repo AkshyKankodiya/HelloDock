@@ -100,7 +100,6 @@ jobs:
 
     - name: Print Allure Report URL
       run: |
-          REPO_NAME="${{ github.repository }}"
-          GITHUB_USERNAME="${{ github.repository_owner }}"
-          echo "Allure report is available at: https://${GITHUB_USERNAME}.github.io/${REPO_NAME#*/}/"
+        echo "Allure report is available at: https://${GITHUB_REPOSITORY_OWNER}.github.io/${GITHUB_REPOSITORY#*/}/"
+
       
