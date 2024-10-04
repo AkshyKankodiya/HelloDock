@@ -9,13 +9,6 @@
    "test": "npx playwright test --reporter=line,allure-playwright"
   },
   
-    
-    
-  
-  
-  
- 
-
   "author": "Rahul Bhutt",
   "license": "ISC",
   "dependencies": {
