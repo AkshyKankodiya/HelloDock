@@ -33,15 +33,29 @@ jobs:
           BASE_URL: ${{ github.event.inputs.choice }}  # Pass the selected URL to the tests
         run: npx playwright test || true
 
-     
-      
       ## Allure report 
       - name: Generate Allure Report
         run: |
-            npm install -g allure-commandline
-            allure generate allure-results -o allure-report --clean
+          npm install -g allure-commandline
+          allure generate allure-results -o allure-report --clean
 
-      ## Deploy step      
+      ## Serve Allure Report and capture output
+      - name: Serve Allure Report
+        id: serve-report
+        run: |
+          npx allure serve allure-results | tee allure-serve-output.txt
+          echo "Report served. Check the output log for the URL."
+
+      ## Extract URL from the log file
+      - name: Extract Allure Report URL
+        id: extract-url
+        run: |
+          echo "Extracting Allure Report URL..."
+          url=$(grep -o 'http://[^ ]*' allure-serve-output.txt | tail -n 1)
+          echo "Allure Report URL: $url"
+          echo "report_url=$url" >> $GITHUB_ENV
+
+      ## Deploy step       
       - name: Deploy Allure Report to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
@@ -49,8 +63,8 @@ jobs:
           publish_dir: ./allure-report
           publish_branch: allure-report
           keep_files: false
-      
-       # Upload the entire test results folder as an artifact
+
+      # Upload the entire test results folder as an artifact
       - name: Upload Playwright test results
         uses: actions/upload-artifact@v3
         with:
@@ -59,8 +73,8 @@ jobs:
 
       - name: Get Build URL
         run: |
-            echo "The Build URL is: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-          
+          echo "The Build URL is: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+
       # Send email notification after the build completes
       - name: Send email notification
         if: always()  # Ensures email is sent regardless of build success or failure
@@ -76,10 +90,12 @@ jobs:
 
             Build URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
 
+            Allure Report URL: ${{ env.report_url }}
+
             Thanks,
             HelloDock Automation Team
           server_address: email-smtp.us-east-2.amazonaws.com  # Corrected parameter name
-          server_port: 587                                   # Corrected parameter name
-          username: ${{ secrets.SMTP_USER }}                 # Corrected parameter name
-          password: ${{ secrets.SMTP_PASSWORD }}             # Corrected parameter name
-          secure: false              
+          server_port: 587                                # Corrected parameter name
+          username: ${{ secrets.SMTP_USER }}              # Corrected parameter name
+          password: ${{ secrets.SMTP_PASSWORD }}          # Corrected parameter name
+          secure: false
