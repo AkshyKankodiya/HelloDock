@@ -44,16 +44,26 @@ jobs:
         env:
           CI: true
 
-      # Step 6: Generate Allure report with history
       - name: Generate Allure Report with History
         run: |
-          if [ -d "allure-results/history" ]; then
-            echo "Previous Allure history found."
-          else
-            echo "No previous history found, creating a new history folder."
-            mkdir -p allure-results/history
-          fi
-          npm run allure:generate
+            if [[ "$RUNNER_OS" == "Windows" ]]; then
+              if (Test-Path -Path "allure-results/history") {
+                echo "Previous Allure history found."
+              } else {
+                echo "No previous history found, creating a new history folder."
+                New-Item -ItemType Directory -Path "allure-results/history"
+              }
+            else
+              if [ -d "allure-results/history" ]; then
+                echo "Previous Allure history found."
+              else
+                echo "No previous history found, creating a new history folder."
+                mkdir -p allure-results/history
+              fi
+            fi
+            npm run allure:generate
+        shell: bash
+  
 
       # Step 7: Upload the new Allure results
       - name: Upload Allure Results
