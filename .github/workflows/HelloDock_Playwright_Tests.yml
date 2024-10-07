@@ -27,8 +27,14 @@ jobs:
       - name: Install dependencies
         run: npm install
 
+      - name: Install dependencies
+        run: npm ci
+
    #   - name: Install Playwright browsers
    #     run: npx playwright install
+
+      - name: Install Playwright Allure
+        run: npm install --save-dev allure-playwright
 
       - name: Run Playwright tests
         env:
@@ -44,11 +50,11 @@ jobs:
           name: test-results
           path: '**/test-results/**'
 
-      - name: Upload Allure results
+      - name: Upload Allure Results
         uses: actions/upload-artifact@v3
         with:
-          name: allure-results
-          path: allure-results/
+            name: allure-results
+            path: ./allure-results
 
       - name: Get Build URL
         run: |
@@ -77,32 +83,36 @@ jobs:
           password: ${{ secrets.SMTP_PASSWORD }}
           secure: false
 
-  allure-report:
-    runs-on: ubuntu-latest
+  publish:
+    runs-on: windows-latest
     needs: test
 
     steps:
-    - name: Download Allure Results
-      uses: actions/download-artifact@v3
-      with:
-        name: allure-results
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-    - name: Install Allure
-      run: |
-        npm install -g allure-commandline
+      - name: Download Allure Results
+        uses: actions/download-artifact@v3
+        with:
+          name: allure-results
+          path: allure-results
 
-    - name: Generate Allure Report
-      run: |
-        allure generate allure-results --clean -o allure-report
+      - name: Install Allure CLI
+        run: |
+          npm install -g allure-commandline --save-dev
+          allure --version
 
-   ## Deploy step      
-    - name: Deploy Allure Report to GitHub Pages
-      uses: peaceiris/actions-gh-pages@v3
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }} 
-        publish_dir: ./allure-report
-        publish_branch: allure-report
-        keep_files: false
-    - name: Print Allure Report URL
-      run: |
+      - name: Generate Allure Report
+        run: |
+          allure generate allure-results --clean -o allure-report
+   #       allure open allure-report  # (Optional) to open report locally
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./allure-report
+
+      - name: Print Allure Report URL
+        run: |
             echo "Allure report is available at: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/"         

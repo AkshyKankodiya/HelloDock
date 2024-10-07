@@ -1,4 +1,4 @@
-name: TestsAllureReportHYSTORY
+name: TestsAllureReportWithHistory12
 
 on:
   workflow_dispatch:
@@ -76,7 +76,9 @@ jobs:
 
       - name: Clean old gh-pages content
         run: |
-          Remove-Item -Recurse -Force ./gh-pages  # Updated for Windows
+          if (Test-Path gh-pages) {
+            Remove-Item -Recurse -Force ./gh-pages
+          }
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
