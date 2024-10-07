@@ -66,7 +66,7 @@ jobs:
       - name: Generate Allure Report
         run: |
           allure generate allure-results --clean -o allure-report
-          allure open allure-report  # (Optional) to open report locally
+   #       allure open allure-report  # (Optional) to open report locally
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
