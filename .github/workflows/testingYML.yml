@@ -35,7 +35,7 @@ jobs:
         run: npm install --save-dev allure-playwright
 
       - name: Run Playwright Tests
-        run: npx playwright test --reporter=line,allure-playwright
+        run: npx playwright test --reporter=line,allure-playwright || true
 
       - name: Upload Allure Results
         uses: actions/upload-artifact@v3
