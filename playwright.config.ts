@@ -1,6 +1,7 @@
 import type { PlaywrightTestConfig } from '@playwright/test';
 import { devices } from '@playwright/test';
 import { defineConfig } from '@playwright/test';
+import { AllureReporter } from 'allure-playwright';
 
 
 /**
