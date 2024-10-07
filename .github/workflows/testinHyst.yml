@@ -47,16 +47,17 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-     # Step to pull the history from the previous report
+      # Step to pull the history from the previous report
       - name: Download previous report history
         run: |
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
           git clone --depth 1 --branch gh-pages https://github.com/${{ github.repository }} gh-pages
           mkdir -p allure-results/history
-          if (Test-Path -Path gh-pages/history) {
-          Copy-Item -Recurse gh-pages/history allure-results/
-
+          if (Test-Path gh-pages/history) {
+            Copy-Item -Recurse gh-pages/history allure-results/
+          }
+            
       - name: Download Allure Results
         uses: actions/download-artifact@v3
         with:
