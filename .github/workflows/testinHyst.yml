@@ -47,6 +47,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+     
 
       - name: Download Allure Results
         uses: actions/download-artifact@v3
@@ -65,7 +66,7 @@ jobs:
 
       - name: Clean old gh-pages content
         run: |
-          rm -rf ./gh-pages
+          Remove-Item -Recurse -Force ./gh-pages  # Updated for Windows
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
