@@ -1,4 +1,4 @@
-name: HelloDockWithHYS
+name: HelloDock Playwright Tests
 
 on:
   workflow_dispatch:
@@ -22,107 +22,59 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '20'  # Downgrade to Node.js 18 for compatibility
+
+      - name: Install dependencies
+        run: npm install
 
       - name: Install dependencies
         run: npm ci
 
-      - name: Install Playwright Allure
-        run: npm install --save-dev allure-playwright
-
-      - name: Run Playwright tests
-        env:
-          BASE_URL: ${{ github.event.inputs.choice }}
-        run: |
-          npx playwright test --reporter=line,allure-playwright || true
-
-      # Upload Playwright test results as an artifact
-      - name: Upload Playwright test results
-        uses: actions/upload-artifact@v3
+      # Step 4: Download the previous Allure history if available
+      - name: Download Previous Allure History
+        uses: actions/download-artifact@v3
         with:
-          name: test-results
-          path: '**/test-results/**'
+          name: allure-history
+          path: allure-results/history
+        continue-on-error: true
 
+      # Step 5: Run Playwright tests
+      - name: Run Playwright Tests
+        run: npm run test
+        env:
+          CI: true
+
+      # Step 6: Generate Allure report with history
+      - name: Generate Allure Report with History
+        run: |
+          if [ -d "allure-results/history" ]; then
+            echo "Previous Allure history found."
+          else
+            echo "No previous history found, creating a new history folder."
+            mkdir -p allure-results/history
+          fi
+          npm run allure:generate
+
+      # Step 7: Upload the new Allure results
       - name: Upload Allure Results
         uses: actions/upload-artifact@v3
         with:
           name: allure-results
-          path: ./allure-results
-
-      - name: Get Build URL
-        run: |
-          echo "The Build URL is: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-
-      # Send email notification
-      - name: Send email notification
-        if: always()
-        uses: dawidd6/action-send-mail@v3
-        with:
-          from: Rahul <no-reply@hellodock.com>
-          to: rahul.trello2020@gmail.com
-          subject: Playwright Build Completed
-          body: |
-            Hello Rahul,
-
-            The build process for your Playwright TypeScript project has completed. Please check the results.
-
-            - Build URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
-
-            Thanks,
-            HelloDock Automation Team
-          server_address: email-smtp.us-east-2.amazonaws.com
-          server_port: 587
-          username: ${{ secrets.SMTP_USER }}
-          password: ${{ secrets.SMTP_PASSWORD }}
-          secure: false
-
-  publish:
-    runs-on: windows-latest
-    needs: test
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      # Step 1: Download previous Allure history (if it exists) from gh-pages
-      - name: Download previous report history
-        run: |
-          git config --global user.name "GitHub Actions"
-          git config --global user.email "actions@github.com"
-          git clone --depth 1 --branch gh-pages https://github.com/${{ github.repository }} gh-pages
-          if (Test-Path allure-results/history) {
-            Remove-Item -Recurse -Force allure-results/history
-          }
-          if (Test-Path gh-pages/history) {
-            Copy-Item -Recurse gh-pages/history allure-results/
-          }
-
-      # Step 2: Download current Allure Results
-      - name: Download Allure Results
-        uses: actions/download-artifact@v3
-        with:
-          name: allure-results
           path: allure-results
 
-      # Step 3: Install Allure CLI
-      - name: Install Allure CLI
-        run: |
-          npm install -g allure-commandline --save-dev
-          allure --version
+      # Step 8: Upload Allure history for the next build
+      - name: Upload Allure History
+        uses: actions/upload-artifact@v3
+        with:
+          name: allure-history
+          path: allure-results/history
 
-      # Step 4: Generate Allure Report without cleaning the history
-      - name: Generate Allure Report with History
-        run: |
-          allure generate allure-results -o allure-report
-
-      # Step 5: Deploy the updated Allure report to GitHub Pages
-      - name: Deploy to GitHub Pages
+      # Step 9: Publish Allure report to GitHub Pages (keeps report history)
+      - name: Publish Allure Report to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./allure-report
+          # Keep history of previous reports
+          keep_files: true
 
-      # Optional: Print the URL of the generated Allure report
-      - name: Print Allure Report URL
-        run: |
-            echo "Allure report is available at: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/"
