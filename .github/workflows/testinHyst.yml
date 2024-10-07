@@ -10,23 +10,24 @@ on:
           - https://dev.hellodock.com/
           - https://qa.hellodock.com/
           - https://app.hellodock.com/
+        required: true
 
 jobs:
   test:
     runs-on: windows-latest
 
     steps:
+      # Step 1: Checkout the code
       - name: Checkout code
         uses: actions/checkout@v4
 
+      # Step 2: Set up Node.js environment
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'  # Downgrade to Node.js 18 for compatibility
+          node-version: '18'  # Downgrade to Node.js 18 for compatibility
 
-      - name: Install dependencies
-        run: npm install
-
+      # Step 3: Install project dependencies
       - name: Install dependencies
         run: npm ci
 
@@ -40,30 +41,22 @@ jobs:
 
       # Step 5: Run Playwright tests
       - name: Run Playwright Tests
-        run: npm run test ||true
+        run: npm run test || true  # `|| true` ensures the pipeline does not fail even if tests fail
         env:
           CI: true
+          ENV_URL: ${{ github.event.inputs.choice }}  # Pass the selected environment URL
 
+      # Step 6: Generate Allure Report with History (Windows)
       - name: Generate Allure Report with History
+        shell: pwsh  # Use PowerShell on Windows
         run: |
-            if [[ "$RUNNER_OS" == "Windows" ]]; then
-              if (Test-Path -Path "allure-results/history") {
-                echo "Previous Allure history found."
-              } else {
-                echo "No previous history found, creating a new history folder."
-                New-Item -ItemType Directory -Path "allure-results/history"
-              }
-            else
-              if [ -d "allure-results/history" ]; then
-                echo "Previous Allure history found."
-              else
-                echo "No previous history found, creating a new history folder."
-                mkdir -p allure-results/history
-              fi
-            fi
-            npm run allure:generate
-        shell: bash
-  
+          if (Test-Path -Path "allure-results/history") {
+            echo "Previous Allure history found."
+          } else {
+            echo "No previous history found, creating a new history folder."
+            New-Item -ItemType Directory -Path "allure-results/history"
+          }
+          npm run allure:generate
 
       # Step 7: Upload the new Allure results
       - name: Upload Allure Results
@@ -85,6 +78,4 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./allure-report
-          # Keep history of previous reports
-          keep_files: true
-
+          keep_files: true  # Keep history of previous reports
