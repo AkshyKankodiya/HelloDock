@@ -64,9 +64,9 @@ jobs:
         run: |
           allure generate allure-results --clean -o allure-report
 
-      - name: Clean old gh-pages content
-        run: |
-          Remove-Item -Recurse -Force ./gh-pages  # Updated for Windows
+     # - name: Clean old gh-pages content
+     #   run: |
+      #    Remove-Item -Recurse -Force ./gh-pages  # Updated for Windows
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
