@@ -46,7 +46,7 @@ const config: PlaywrightTestConfig = {
 
     /* Base URL to use in actions like `await page.goto('/')`. */
     //baseURL: 'https://app.hellodock.com/',
-    baseURL: process.env.BASE_URL ||'https://dev.hellodock.com/',
+    baseURL: process.env.BASE_URL ||'https://qa.hellodock.com/',
 
      // Set default viewport
     //viewport: { width: 1366, height: 768 },
