@@ -297,12 +297,12 @@ class reusableActionsClass {
    */
 
   async deleteExceptions() {
-    const isLiveUrl = this.page.url();
-    if (isLiveUrl.startsWith('https://app.hellodock.com')) {
-      await webElementActionClass_page.Click(this.fixExceptions_tab_prod)
-    } else {
+    // const isLiveUrl = this.page.url();
+    // if (isLiveUrl.startsWith('https://app.hellodock.com')) {
+    //   await webElementActionClass_page.Click(this.fixExceptions_tab_prod)
+    // } else {
       await webElementActionClass_page.Click(this.fixExceptions_tab)
-    }
+    // }
 
     await waitActionClass.WaitUntilElementVisible(this.titleExceptions)
     //await waitActionClass.WaitUntilElementVisible(this.inputExceptionsPO_inbox)
