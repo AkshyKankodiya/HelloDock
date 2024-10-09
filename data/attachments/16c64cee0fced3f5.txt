@@ -1,4 +1,0 @@
-Error waiting for element to be visible: locator.waitFor: Test timeout of 600000ms exceeded.
-Call log:
-  - waiting for locator('//div[contains(text(),\'Successfully deleted PO rule.\')]') to be visible
-
