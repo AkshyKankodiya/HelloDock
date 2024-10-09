@@ -628,22 +628,28 @@ class reusableActionsClass {
   //   }
   // }
 
-  async verifyShipmentDate(expectedShipmentDate: string) {
-    this.actualShipmentDate = await this.shipment_date_inbox.inputValue();
-  
+async verifyShipmentDate(expectedShipmentDate: string) {
+    const actualShipmentDate = await this.shipment_date_inbox.inputValue();
+
+    // Remove leading zeros from both actual and expected values
+    const cleanedActualShipmentDate = actualShipmentDate.replace(/^0+/, '');
+    const cleanedExpectedShipmentDate = expectedShipmentDate.replace(/^0+/, '');
+
     // Convert both actual and expected values to lowercase for case-insensitive comparison
-    const actualShipmentDateLowerCase = this.actualShipmentDate.toLowerCase();
-    const expectedShipmentDateLowerCase = expectedShipmentDate.toLowerCase();
+    const actualShipmentDateLowerCase = cleanedActualShipmentDate.toLowerCase();
+    const expectedShipmentDateLowerCase = cleanedExpectedShipmentDate.toLowerCase();
+
     console.log(`Shipment Date Expected "\n${expectedShipmentDateLowerCase}"\nAnd Actual "\n${actualShipmentDateLowerCase}"`);
+
     // Check if any word from the expected value is present in the actual value
     const containsExpectedWord = expectedShipmentDateLowerCase.split(' ').some(word => actualShipmentDateLowerCase.includes(word));
-  
+
     if (containsExpectedWord) {
-      console.log('Shipment Date assertion passed\n');
+        console.log('Shipment Date assertion passed\n');
     } else {
-      throw new Error(`Shipment Date failed: Expected "\n${expectedShipmentDate}"\n but got "\n${this.actualShipmentDate}"`);
+        throw new Error(`Shipment Date failed: Expected "\n${expectedShipmentDate}"\n but got "\n${this.actualShipmentDate}"`);
     }
-  }
+}
 
   /**
   * Verifies the provided shipment weight against the expected value.
@@ -673,7 +679,8 @@ class reusableActionsClass {
   
     // Check if actual weight is within a reasonable tolerance of the expected weight
     const tolerance = 0.1; // Adjust tolerance as needed (e.g., 0.5 for larger weights)
-    console.log(`Shipment Weight Expected "\n${expectedWeightNumber}"\nAnd Actual "\n${actualWeightNumber}"`);
+    //console.log(`Shipment Weight Expected "\n${expectedWeightNumber}"\nAnd Actual "\n${actualWeightNumber}"`);
+    console.log(`Shipment Weight Expected "\n${expectedShipmentWeight}"\nAnd Actual "\n${this.actualShipmentWeight}"`);
     const isWithinTolerance = Math.abs(actualWeightNumber - expectedWeightNumber) <= tolerance;
   
     if (isWithinTolerance) {
