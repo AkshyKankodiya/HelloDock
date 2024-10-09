@@ -40,7 +40,7 @@ const config: PlaywrightTestConfig = {
     actionTimeout: 0,
     browserName: 'chromium',
     channel: 'chrome',
-    headless: false,
+    headless: true,
 
    
 
