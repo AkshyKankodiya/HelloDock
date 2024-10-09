@@ -1,6 +1,9 @@
 name: HelloDock Smoke Test suite
 
 on:
+  schedule:
+   # - cron: "0 6,12,18,0 * * *"
+    - cron: "0 * * * *"
   workflow_dispatch:
     inputs:
       choice:
@@ -67,6 +70,7 @@ jobs:
         with:
           from: Hellodock Team <no-reply@hellodock.com>
           to: rahul.trello2020@gmail.com
+          cc: ${{ failure() && 'tqa8769@gmail.com' || '' }}
           subject: Test Automation Build Job Status:${{ job.status }}
           body: |
             Hello Team,
