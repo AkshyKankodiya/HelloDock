@@ -51,9 +51,9 @@ jobs:
         if: failure()
         run: echo "CC_EMAIL=tqa8769@gmail.com" >> $GITHUB_ENV
 
-      - name: Set CC Email for success (No CC)
-        if: success()
-        run: echo "CC_EMAIL=" >> $GITHUB_ENV
+      #- name: Set CC Email for success (No CC)
+      #  if: success()
+      #  run: echo "CC_EMAIL=" >> $GITHUB_ENV
 
       # Upload Playwright test results as artifacts
       - name: Upload Playwright test results
