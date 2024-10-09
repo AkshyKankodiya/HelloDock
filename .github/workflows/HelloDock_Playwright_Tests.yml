@@ -1,4 +1,4 @@
-name: HelloDock Playwright Tests
+name: HelloDock Smoke Test suite
 
 on:
   workflow_dispatch:
@@ -7,8 +7,8 @@ on:
         type: choice
         description: Select The Environment URL
         options:
-          - https://dev.hellodock.com/
           - https://qa.hellodock.com/
+          - https://dev.hellodock.com/
           - https://app.hellodock.com/
 
 jobs:
@@ -65,16 +65,18 @@ jobs:
         if: always()
         uses: dawidd6/action-send-mail@v3
         with:
-          from: Rahul <no-reply@hellodock.com>
+          from: Hellodock Team <no-reply@hellodock.com>
           to: rahul.trello2020@gmail.com
-          subject: Playwright Build Completed
+          subject: Test Automation Build Job Status:${{ job.status }}
           body: |
-            Hello Rahul,
+            Hello Team,
 
-            The build process for your Playwright TypeScript project has completed. Please check the results.
+            The build process for your smoke test is completed. Please use below url to view result.
 
-            - Build URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
-
+            Build URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+            Environment : ${{ github.event.inputs.choice }}
+           
+            
             Thanks,
             HelloDock Automation Team
           server_address: email-smtp.us-east-2.amazonaws.com

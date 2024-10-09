@@ -628,7 +628,7 @@ class reusableActionsClass {
   //   }
   // }
 
-async verifyShipmentDate(expectedShipmentDate: string) {
+  async verifyShipmentDate(expectedShipmentDate: string) {
     const actualShipmentDate = await this.shipment_date_inbox.inputValue();
 
     // Remove leading zeros from both actual and expected values
@@ -647,7 +647,7 @@ async verifyShipmentDate(expectedShipmentDate: string) {
     if (containsExpectedWord) {
         console.log('Shipment Date assertion passed\n');
     } else {
-        throw new Error(`Shipment Date failed: Expected "\n${expectedShipmentDate}"\n but got "\n${this.actualShipmentDate}"`);
+        throw new Error(`Shipment Date failed: Expected "\n${expectedShipmentDateLowerCase}"\n but got "\n${actualShipmentDateLowerCase}"`);
     }
 }
 
