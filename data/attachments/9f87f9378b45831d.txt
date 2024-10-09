@@ -1,0 +1,23 @@
+User Login Succsessfully On QA Env : https://qa.hellodock.com/
+All Rules Deleted
+Total Uploaded PO: 6
+All Uploaded PO Are Deleted
+Total Exceptions  : 0
+All Exceptions Deleted
+Rule Format is Added 
+Rule Is Created With Folder: QA-1 And Rule is : "2"000000
+Rule Format is Added 
+Rule Is Created With Folder: QA-2 And Rule is : "2"000000
+Rule Format is Added 
+Rule Is Created With Folder: QA-3 And Rule is : "2"000000
+Rule Format is Added 
+Rule Is Created With Folder: Test_Automation_06092024_0412 And Rule is : “KEHE”0000000000
+All Tags are Deleted
+TAG is Verified :- quarry
+TAG is Verified On Filemenegements Tag :- quarry
+All Tags are Deleted
+TAG is Verified :- seattle
+TAG is Verified On Filemenegements Tag :- seattle
+Element completely disappeared (detached from the DOM)
+Files Uploaded Successfully
+File Count assertion passed.
