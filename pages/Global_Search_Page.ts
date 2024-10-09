@@ -68,11 +68,12 @@ class globalSearch_page {
       }
 
       console.log("Verify By PO Number :- ", PO_Numbers);
-      await this.page.keyboard.press('Escape');
+      
     }
 
     // If Shipper_Name is passed, perform search with it
     if (Shipper_Name) {
+      await this.page.keyboard.press('Escape');
       await webElementActionClass_page.send_Keys(reusableActionsClass_page.searchGlobal_txt, Shipper_Name);
       await this.page.keyboard.press('Enter');
       await this.page.waitForTimeout(4000);
