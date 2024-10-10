@@ -1,8 +1,8 @@
 name: HelloDock Smoke Test suite
 
 on:
- # schedule:
- #  - cron: "0 * * * *"  # Runs the tests every hour
+  schedule:
+  - cron: "0 6,12,18,0 * * *"  
   workflow_dispatch:
     inputs:
       choice:
