@@ -1,4 +1,4 @@
-name: HelloDock Smoke Test suite Old
+name: HelloDock Smoke Test suite Old new
 
 on:
   workflow_dispatch:
