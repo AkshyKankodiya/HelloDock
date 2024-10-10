@@ -1,4 +1,4 @@
-name: HelloDck123
+name: HelloDock Smoke Tess S3 bucket
 
 on:
   workflow_dispatch:
