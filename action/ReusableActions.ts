@@ -757,6 +757,7 @@ class reusableActionsClass {
     } else {
       throw new Error(`Sign-On Approval failed: Expected "\n${expectedSignOnApproval}"\n but got "\n${this.actualSignOnApproval}"`);
     }
+    await this.page.keyboard.press('Escape');
   }
 
 

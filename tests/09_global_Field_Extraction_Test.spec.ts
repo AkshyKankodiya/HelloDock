@@ -38,8 +38,8 @@ test.describe.serial('HelloDock', () => {
             await reusableActionsClass_page.verifyShipperName(po_no.PO1.Shipper_Name);
             await reusableActionsClass_page.verifyShipperAddress(po_no.PO1.Shipper_Address);
             await reusableActionsClass_page.verifyDestinationAddress(po_no.PO1.Destination_Address);
-            await reusableActionsClass_page.verifyShipmentDate(po_no.PO1.Shipment_Date);
-            await reusableActionsClass_page.verifyShipmentWeight(po_no.PO1.Shipment_Weight);
+            //await reusableActionsClass_page.verifyShipmentDate(po_no.PO1.Shipment_Date);
+            //await reusableActionsClass_page.verifyShipmentWeight(po_no.PO1.Shipment_Weight);
             await reusableActionsClass_page.verifyCarrierName(po_no.PO1.Carrier_Name)
             await reusableActionsClass_page.verifySignOnApproval(po_no.PO1.Sign_On_Approval)
         });

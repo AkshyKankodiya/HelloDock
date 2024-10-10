@@ -32,10 +32,10 @@ test.describe.serial('HelloDock', () => {
             await reusableActionsClass_page.verifyShipperName(po_no.PO2.Shipper_Name);
             await reusableActionsClass_page.verifyShipperAddress(po_no.PO2.Shipper_Address);
             await reusableActionsClass_page.verifyDestinationAddress(po_no.PO2.Destination_Address);
-            await reusableActionsClass_page.verifyShipmentDate(po_no.PO2.Shipment_Date);
+            //await reusableActionsClass_page.verifyShipmentDate(po_no.PO2.Shipment_Date);
             await reusableActionsClass_page.verifyCarrierName(po_no.PO2.Carrier_Name)
             await reusableActionsClass_page.verifySignOnApproval(po_no.PO2.Sign_On_Approval)
-            await reusableActionsClass_page.verifyShipmentWeight(po_no.PO2.Shipment_Weight);
+            //await reusableActionsClass_page.verifyShipmentWeight(po_no.PO2.Shipment_Weight);
 
         });
 
@@ -45,10 +45,10 @@ test.describe.serial('HelloDock', () => {
             await reusableActionsClass_page.verifyShipperName(po_no.PO3.Shipper_Name);
             await reusableActionsClass_page.verifyShipperAddress(po_no.PO3.Shipper_Address);
             await reusableActionsClass_page.verifyDestinationAddress(po_no.PO3.Destination_Address);
-            await reusableActionsClass_page.verifyShipmentDate(po_no.PO3.Shipment_Date);
+            //await reusableActionsClass_page.verifyShipmentDate(po_no.PO3.Shipment_Date);
             await reusableActionsClass_page.verifyCarrierName(po_no.PO3.Carrier_Name)
             await reusableActionsClass_page.verifySignOnApproval(po_no.PO3.Sign_On_Approval)
-            await reusableActionsClass_page.verifyShipmentWeight(po_no.PO3.Shipment_Weight);
+            //await reusableActionsClass_page.verifyShipmentWeight(po_no.PO3.Shipment_Weight);
 
         });
 

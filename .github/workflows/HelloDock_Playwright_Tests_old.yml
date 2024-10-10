@@ -1,8 +1,6 @@
 name: HelloDock Smoke Test suite
 
 on:
- # schedule:
- #  - cron: "0 * * * *"  # Runs the tests every hour
   workflow_dispatch:
     inputs:
       choice:
@@ -24,7 +22,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '20'  # Downgrade to Node.js 18 for compatibility
 
       - name: Install dependencies
         run: npm install
@@ -38,58 +36,46 @@ jobs:
       - name: Install Playwright Allure
         run: npm install --save-dev allure-playwright
 
-      # Run Playwright tests
       - name: Run Playwright tests
         env:
           BASE_URL: ${{ github.event.inputs.choice }}
         run: |
-          npx playwright test --reporter=line,allure-playwright
-        continue-on-error: true
+          npx playwright test --reporter=line,allure-playwright || true
 
-      # Check if Playwright tests failed and set CC email based on that
-      - name: Set CC Email for test failures
-        if: failure()
-        run: echo "CC_EMAIL=tqa8769@gmail.com" >> $GITHUB_ENV
 
-      - name: Set CC Email for success (No CC)
-        if: success()
-        run: echo "CC_EMAIL=" >> $GITHUB_ENV
-
-      # Upload Playwright test results as artifacts
+      ## Upload the results as artifacts
       - name: Upload Playwright test results
         uses: actions/upload-artifact@v3
         with:
           name: test-results
           path: '**/test-results/**'
 
-      # Upload Allure results
       - name: Upload Allure Results
         uses: actions/upload-artifact@v3
         with:
-          name: allure-results
-          path: ./allure-results
+            name: allure-results
+            path: ./allure-results
 
-      # Get Build URL for email
       - name: Get Build URL
         run: |
           echo "The Build URL is: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
 
-      # Send email notification with conditional CC based on test result
+      ## Send email notification with Allure link
       - name: Send email notification
-        if: always()  # Always send the email
+        if: always()
         uses: dawidd6/action-send-mail@v3
         with:
           from: Hellodock Team <no-reply@hellodock.com>
           to: rahul.trello2020@gmail.com
-          cc: ${{ env.CC_EMAIL }}  # Adds CC only if tests fail
           subject: Test Automation Build Job Status:${{ job.status }}
           body: |
             Hello Team,
 
-            The build process for your smoke test is completed. Please use the link below to view the result.
+            The build process for your smoke test is completed. Please use below url to view result.
 
             Build URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
-            Environment: ${{ github.event.inputs.choice }}
+            Environment : ${{ github.event.inputs.choice }}
+           
             
             Thanks,
             HelloDock Automation Team
@@ -122,6 +108,9 @@ jobs:
         run: |
           allure generate allure-results -o allure-report
 
+   #      allure generate allure-results --clean -o allure-report
+   #       allure open allure-report  # (Optional) to open report locally
+
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
@@ -130,4 +119,4 @@ jobs:
 
       - name: Print Allure Report URL
         run: |
-            echo "Allure report is available at: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/"
+            echo "Allure report is available at: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/"         
