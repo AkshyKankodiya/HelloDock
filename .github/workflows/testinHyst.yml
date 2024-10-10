@@ -56,6 +56,12 @@ jobs:
         run: |
           echo "The Build URL is: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
 
+       ## Debug step: List directories to ensure paths exist
+      - name: Check Directory Structure
+        run: |
+         echo "Listing current directories:"
+         ls -R
+
       ## Configure AWS Credentials
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v3
