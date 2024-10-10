@@ -80,7 +80,7 @@ jobs:
         with:
           from: Hellodock Team <no-reply@hellodock.com>
           to: rahul.trello2020@gmail.com
-          subject: Test Automation Build Job Status: ${{ job.status }}
+          subject: "Test Automation Build Job Status: ${{ job.status }}"
           body: |
             Hello Team,
 
