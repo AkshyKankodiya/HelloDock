@@ -109,7 +109,6 @@ jobs:
 
   download:
     runs-on: windows-latest
-    if: ${{ github.event.inputs.download == true }} # Only run if download option is selected
 
     steps:
       - name: Install AWS CLI
