@@ -96,6 +96,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      ## Download Playwright test results from S3
+      - name: Download Playwright Test Results from S3
+        run: |
+          aws s3 cp --recursive s3://your-s3-bucket-name/test-results/${{ github.run_id }}/ ./test-results/
+
+      ## Download Allure Results from S3
       - name: Download Allure Results from S3
         run: |
           aws s3 cp --recursive s3://your-s3-bucket-name/allure-results/${{ github.run_id }}/ ./allure-results/
@@ -109,6 +115,7 @@ jobs:
         run: |
           allure generate allure-results -o allure-report
 
+      ## Upload Allure Report back to S3
       - name: Upload Allure Report to S3
         run: |
           aws s3 cp --recursive ./allure-report s3://your-s3-bucket-name/allure-reports/${{ github.run_id }}/
