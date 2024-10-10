@@ -14,7 +14,7 @@ on:
       download:
         type: boolean
         description: Download the test results and report from S3
-        default: true
+        default: false
 
 jobs:
   test:
