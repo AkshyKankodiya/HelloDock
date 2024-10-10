@@ -1,4 +1,4 @@
-name: HelloDock Smoke Test suite Old newtesting
+name: HelloDock S3 bucket new builds new
 
 on:
   workflow_dispatch:
@@ -27,8 +27,11 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Install dependencies
-        run: npm ci
+      - name: Install Playwright browsers
+        run: npx playwright install
+
+      - name: Install Playwright Allure
+        run: npm install --save-dev allure-playwright
 
         ## Install AWS CLI on Windows using PowerShell
       - name: Install AWS CLI
@@ -39,38 +42,39 @@ jobs:
           Remove-Item -Path "AWSCLIV2.msi"
           aws --version
 
-     # - name: Install Playwright browsers
-     #   run: npx playwright install
-
-      - name: Install Playwright Allure
-        run: npm install --save-dev allure-playwright
-
       - name: Run Playwright tests
         env:
           BASE_URL: ${{ github.event.inputs.choice }}
         run: |
           npx playwright test --reporter=line,allure-playwright || true
 
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v2
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1  # Change to your region
-
-      ## Upload the Playwright test results to S3
-      - name: Upload Playwright test results to S3
-        run: |
-          aws s3 cp --recursive ./test-results s3://your-s3-bucket-name/test-results/${{ github.run_id }}/
-
-      ## Upload the Allure results to S3
-      - name: Upload Allure Results to S3
-        run: |
-          aws s3 cp --recursive ./allure-results s3://your-s3-bucket-name/allure-results/${{ github.run_id }}/
-
       - name: Get Build URL
         run: |
           echo "The Build URL is: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+
+      ## Debug step: List directories to ensure paths exist
+      - name: Check Directory Structure
+        run: |
+         echo "Listing current directories:"
+         ls -R
+
+      ## Configure AWS Credentials
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v3
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      ## Upload Playwright test results to S3
+      - name: Upload Playwright test results to S3
+        run: |
+          aws s3 cp ./test-results/ s3://hellodock-testing/test-results/ --recursive
+
+      ## Upload Allure report to S3
+      - name: Upload Allure report to S3
+        run: |
+          aws s3 cp ./allure-results/ s3://hellodock-testing/allure-results/ --recursive
 
       ## Send email notification with Allure link
       - name: Send email notification
@@ -79,16 +83,18 @@ jobs:
         with:
           from: Hellodock Team <no-reply@hellodock.com>
           to: rahul.trello2020@gmail.com
-          subject: Test Automation Build Job Status:${{ job.status }}
+          subject: "Test Automation Build Job Status: ${{ job.status }}"
           body: |
             Hello Team,
 
-            The build process for your smoke test is completed. Please use below URLs to view results:
+            The build process for your smoke test is completed. Please use the below URLs to view the results:
 
-            Playwright Test Results: https://your-s3-bucket-name.s3.amazonaws.com/test-results/${{ github.run_id }}/index.html
-            Allure Report: https://your-s3-bucket-name.s3.amazonaws.com/allure-results/${{ github.run_id }}/index.html
+            Playwright test results: https://s3.amazonaws.com/hellodock-testing/test-results/
+            Allure report: https://s3.amazonaws.com/hellodock-testing/allure-results/
+
+            Build URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
             Environment: ${{ github.event.inputs.choice }}
-           
+
             Thanks,
             HelloDock Automation Team
           server_address: email-smtp.us-east-2.amazonaws.com
@@ -96,39 +102,39 @@ jobs:
           username: ${{ secrets.SMTP_USER }}
           password: ${{ secrets.SMTP_PASSWORD }}
           secure: false
-
-  publish:
+  download:
     runs-on: windows-latest
-    needs: test
+    if: ${{ github.event.inputs.download == true }} # Only run if download option is selected
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - name: Install AWS CLI
+        shell: powershell
+        run: |
+          Invoke-WebRequest -Uri "https://awscli.amazonaws.com/AWSCLIV2.msi" -OutFile "AWSCLIV2.msi"
+          Start-Process msiexec.exe -ArgumentList '/i AWSCLIV2.msi /quiet /norestart' -Wait
+          Remove-Item -Path "AWSCLIV2.msi"
+          aws --version
 
-      ## Download Playwright test results from S3
-      - name: Download Playwright Test Results from S3
-        run: |
-          aws s3 cp --recursive s3://your-s3-bucket-name/test-results/${{ github.run_id }}/ ./test-results/
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v3
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
 
-      ## Download Allure Results from S3
-      - name: Download Allure Results from S3
+      - name: Download Playwright test results from S3
         run: |
-          aws s3 cp --recursive s3://your-s3-bucket-name/allure-results/${{ github.run_id }}/ ./allure-results/
+          aws s3 cp s3://hellodock-testing/test-results/ ./test-results --recursive
 
-      - name: Install Allure CLI
+      - name: Download Allure report from S3
         run: |
-          npm install -g allure-commandline --save-dev
-          allure --version
+          aws s3 cp s3://hellodock-testing/allure-results/ ./allure-results --recursive
 
-      - name: Generate Allure Report
+      - name: List Downloaded Files
         run: |
-          allure generate allure-results -o allure-report
-
-      ## Upload Allure Report back to S3
-      - name: Upload Allure Report to S3
-        run: |
-          aws s3 cp --recursive ./allure-report s3://your-s3-bucket-name/allure-reports/${{ github.run_id }}/
-      
-      - name: Print Allure Report URL
-        run: |
-          echo "Allure report is available at: https://your-s3-bucket-name.s3.amazonaws.com/allure-reports/${{ github.run_id }}/index.html"
+          echo "Downloaded Playwright test results:"
+          ls -R ./test-results
+          
+          echo "Downloaded Allure report:"
+          ls -R ./allure-results
+ 
