@@ -1,0 +1,24 @@
+User Login Succsessfully On Live Env: https://app.hellodock.com/
+All Rules Deleted
+Total Uploaded PO: 2
+All Uploaded PO Are Deleted
+Total Exceptions  : 0
+All Exceptions Deleted
+Rule Format is Added 
+Rule Is Created With Folder: Test_Automation_06092024_0412 And Rule is : "2"000000
+Element completely disappeared (detached from the DOM)
+Files Uploaded Successfully
+PO Number Expected "
+2065620"
+And Actual "
+2065620"
+PO Numbers assertion passed
+
+Verify By PO Number :-  2065620
+Shipper Name Expected "
+waffle waffle"
+And Actual "
+waffle waffle"
+Shipper Name assertion passed 
+
+Verify Shipper Name By Keywords :-  Waffle Waffle

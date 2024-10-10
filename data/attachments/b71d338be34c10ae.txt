@@ -1,0 +1,17 @@
+User Login Succsessfully On Live Env: https://app.hellodock.com/
+All Rules Deleted
+Total Uploaded PO: 2
+All Uploaded PO Are Deleted
+Total Exceptions  : 0
+All Exceptions Deleted
+Rule Format is Added 
+Rule Is Created With Folder: Test_Automation_06092024_0412 And Rule is : "2"000000
+Element completely disappeared (detached from the DOM)
+Files Uploaded Successfully
+Fixed exceptions with PO: 3300033
+Fixed exceptions with PO: 4400044
+Verify ON ExceptionsTab No Exceptions
+Verify PO Number with Rule:-  3300033
+Global Search Results
+Verify PO Number with Rule:-  4400044
+Global Search Results
