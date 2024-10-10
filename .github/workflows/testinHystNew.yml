@@ -11,9 +11,15 @@ on:
           - https://dev.hellodock.com/
           - https://app.hellodock.com/
 
+      download:
+        type: boolean
+        description: Download the test results and report from S3
+        default: true
+
 jobs:
   test:
     runs-on: windows-latest
+    if: ${{ github.event.inputs.download == false }} # Only run tests if download option is false
 
     steps:
       - name: Checkout code
@@ -27,13 +33,9 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      #- name: Install Playwright browsers
-      # run: npx playwright install
-
       - name: Install Playwright Allure
         run: npm install --save-dev allure-playwright
 
-        ## Install AWS CLI on Windows using PowerShell
       - name: Install AWS CLI
         shell: powershell
         run: |
@@ -52,13 +54,11 @@ jobs:
         run: |
           echo "The Build URL is: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
 
-      ## Debug step: List directories to ensure paths exist
-      - name: Check Directory Structure
+      - name: Validate directories exist
         run: |
-         echo "Listing current directories:"
-         ls -R
+          if [ ! -d "./test-results" ]; then echo "Test results directory does not exist"; exit 1; fi
+          if [ ! -d "./allure-results" ]; then echo "Allure results directory does not exist"; exit 1; fi
 
-      ## Configure AWS Credentials
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v3
         with:
@@ -66,17 +66,14 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
 
-      ## Upload Playwright test results to S3
       - name: Upload Playwright test results to S3
         run: |
           aws s3 cp ./test-results/ s3://hellodock-testing/test-results/ --recursive
 
-      ## Upload Allure report to S3
       - name: Upload Allure report to S3
         run: |
           aws s3 cp ./allure-results/ s3://hellodock-testing/allure-results/ --recursive
 
-      ## Send email notification with Allure link
       - name: Send email notification
         if: always()
         uses: dawidd6/action-send-mail@v3
@@ -103,3 +100,38 @@ jobs:
           password: ${{ secrets.SMTP_PASSWORD }}
           secure: false
 
+  download:
+    runs-on: windows-latest
+    if: ${{ github.event.inputs.download == true }} # Only run if download option is selected
+
+    steps:
+      - name: Install AWS CLI
+        shell: powershell
+        run: |
+          Invoke-WebRequest -Uri "https://awscli.amazonaws.com/AWSCLIV2.msi" -OutFile "AWSCLIV2.msi"
+          Start-Process msiexec.exe -ArgumentList '/i AWSCLIV2.msi /quiet /norestart' -Wait
+          Remove-Item -Path "AWSCLIV2.msi"
+          aws --version
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v3
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Download Playwright test results from S3
+        run: |
+          aws s3 cp s3://hellodock-testing/test-results/ ./test-results --recursive
+
+      - name: Download Allure report from S3
+        run: |
+          aws s3 cp s3://hellodock-testing/allure-results/ ./allure-results --recursive
+
+      - name: List Downloaded Files
+        run: |
+          echo "Downloaded Playwright test results:"
+          ls -R ./test-results
+          
+          echo "Downloaded Allure report:"
+          ls -R ./allure-results
