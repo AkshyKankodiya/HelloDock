@@ -27,8 +27,8 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Install Playwright browsers
-        run: npx playwright install
+      #- name: Install Playwright browsers
+      # run: npx playwright install
 
       - name: Install Playwright Allure
         run: npm install --save-dev allure-playwright
@@ -103,23 +103,3 @@ jobs:
           password: ${{ secrets.SMTP_PASSWORD }}
           secure: false
 
-  publish:
-    runs-on: windows-latest
-    needs: test
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Download Allure Results from S3
-        run: |
-          aws s3 cp s3://hellodock-testing/allure-results/ ./allure-results/ --recursive
-
-      - name: Install Allure CLI
-        run: |
-          npm install -g allure-commandline --save-dev
-          allure --version
-
-      - name: Generate Allure Report
-        run: |
-          allure generate allure-results -o allure-report
