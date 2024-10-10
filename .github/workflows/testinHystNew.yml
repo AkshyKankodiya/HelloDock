@@ -1,4 +1,4 @@
-name: HelloDock Smoke Test S3 bucket new builds
+name: HelloDock Smoke Test S3 Bucket Builds
 
 on:
   workflow_dispatch:
@@ -7,9 +7,13 @@ on:
         type: choice
         description: Select The Environment URL
         options:
+          - https://app.hellodock.com/
           - https://qa.hellodock.com/
           - https://dev.hellodock.com/
-          - https://app.hellodock.com/
+      download:
+        type: boolean
+        description: Download test results and reports after the build
+        default: false
 
 jobs:
   test:
@@ -33,7 +37,7 @@ jobs:
       - name: Install Playwright Allure
         run: npm install --save-dev allure-playwright
 
-        ## Install AWS CLI on Windows using PowerShell
+      ## Install AWS CLI on Windows using PowerShell
       - name: Install AWS CLI
         shell: powershell
         run: |
@@ -55,8 +59,8 @@ jobs:
       ## Debug step: List directories to ensure paths exist
       - name: Check Directory Structure
         run: |
-         echo "Listing current directories:"
-         ls -R
+          echo "Listing current directories:"
+          ls -R
 
       ## Configure AWS Credentials
       - name: Configure AWS credentials
@@ -76,7 +80,7 @@ jobs:
         run: |
           aws s3 cp ./allure-results/ s3://hellodock-testing/allure-results/ --recursive
 
-      ## Send email notification with Allure link
+      ## Send email notification with S3 links
       - name: Send email notification
         if: always()
         uses: dawidd6/action-send-mail@v3
@@ -102,6 +106,7 @@ jobs:
           username: ${{ secrets.SMTP_USER }}
           password: ${{ secrets.SMTP_PASSWORD }}
           secure: false
+
   download:
     runs-on: windows-latest
     if: ${{ github.event.inputs.download == true }} # Only run if download option is selected
@@ -137,4 +142,3 @@ jobs:
           
           echo "Downloaded Allure report:"
           ls -R ./allure-results
- 
