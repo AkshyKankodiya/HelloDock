@@ -73,9 +73,11 @@ jobs:
         run: |
           echo "The Build URL is: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
 
-      # Send email notification with conditional CC based on test result
+        # Send email notification with conditional CC based on test result
       - name: Send email notification
         if: always()  # Always send the email
+        env: 
+          CC_EMAIL: ${{ env.CC_EMAIL }}  # Ensure CC_EMAIL is available in the env context
         uses: dawidd6/action-send-mail@v3
         with:
           from: Hellodock Team <no-reply@hellodock.com>
