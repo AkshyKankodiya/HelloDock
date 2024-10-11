@@ -9,10 +9,10 @@ on:
         type: choice
         description: Select The Environment URL
         options:
+          - https://app.hellodock.com/
           - https://qa.hellodock.com/
           - https://dev.hellodock.com/
-          - https://app.hellodock.com/
-
+          
 jobs:
   test:
     runs-on: windows-latest
@@ -29,8 +29,8 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      #- name: Install Playwright browsers
-      #  run: npx playwright install
+      - name: Install Playwright browsers
+        run: npx playwright install
 
       - name: Install Playwright Allure
         run: npm install --save-dev allure-playwright
@@ -71,4 +71,62 @@ jobs:
       # Get Build URL for email
       - name: Get Build URL
         run: |
-          echo "The Build URL is: https://
+          echo "The Build URL is: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+
+      # Send email notification with conditional CC based on test result
+      - name: Send email notification
+        if: always()  # Always send the email
+        uses: dawidd6/action-send-mail@v3
+        with:
+          from: Hellodock Team <no-reply@hellodock.com>
+          to: rahul.trello2020@gmail.com
+          cc: ${{ env.CC_EMAIL }}  # Adds CC only if tests fail
+          subject: Test Automation Build Job Status: ${{ job.status }}
+          body: |
+            Hello Team,
+
+            The build process for your smoke test is completed. Please use the link below to view the result.
+
+            Build URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+            Environment: ${{ github.event.inputs.choice }}
+            
+            Thanks,
+            HelloDock Automation Team
+          server_address: email-smtp.us-east-2.amazonaws.com
+          server_port: 587
+          username: ${{ secrets.SMTP_USER }}
+          password: ${{ secrets.SMTP_PASSWORD }}
+          secure: false
+
+  publish:
+    runs-on: windows-latest
+    needs: test
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Download Allure Results
+        uses: actions/download-artifact@v3
+        with:
+          name: allure-results
+          path: allure-results
+
+      - name: Install Allure CLI
+        run: |
+          npm install -g allure-commandline --save-dev
+          allure --version
+
+      - name: Generate Allure Report
+        run: |
+          allure generate allure-results -o allure-report
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./allure-report
+
+      - name: Print Allure Report URL
+        run: |
+          echo "Allure report is available at: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/"
