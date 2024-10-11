@@ -45,13 +45,13 @@ jobs:
         continue-on-error: true
         id: playwright-tests
 
-      # Step 6: Set CC_EMAIL for failures or successes
+      # Step 6: Set CC email if there were test failures
       - name: Set CC Email for test failures
-        if: failure()
+        if: (steps.playwright-tests.outcome == 'failure')
         run: echo "CC_EMAIL=${{ vars.FAILURE_CC_EMAIL }}" >> $GITHUB_ENV
 
       - name: Set CC Email for test successes
-        if: success()
+        if: (steps.playwright-tests.outcome == 'success')
         run: echo "CC_EMAIL=${{ vars.SUCCESS_CC_EMAIL }}" >> $GITHUB_ENV
 
       # Step 7: Debug - Print CC_EMAIL to verify it's set correctly
