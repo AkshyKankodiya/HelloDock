@@ -46,7 +46,7 @@ jobs:
 
       # Set CC email if there were test failures
       - name: Set CC Email for test failures
-        if: steps.playwright-tests.outcome == 'failure'
+        if: (steps.playwright-tests.outcome == 'failure')
         run: echo "CC_EMAIL=tqa8769@gmail.com" >> $GITHUB_ENV
 
       # Debug: Print CC_EMAIL value to verify it is correctly set
