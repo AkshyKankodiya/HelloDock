@@ -9,9 +9,10 @@ on:
         type: choice
         description: Select The Environment URL
         options:
+          - https://app.hellodock.com/
           - https://qa.hellodock.com/
           - https://dev.hellodock.com/
-          - https://app.hellodock.com/
+          
 
 jobs:
   test:
