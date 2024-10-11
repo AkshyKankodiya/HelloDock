@@ -49,14 +49,16 @@ jobs:
       - name: Set CC Email for test failures
         if: (steps.playwright-tests.outcome == 'failure')
         run: echo "CC_EMAIL=${{ vars.FAILURE_CC_EMAIL }}" >> $GITHUB_ENV
+        shell: bash
 
       - name: Set CC Email for test successes
         if: (steps.playwright-tests.outcome == 'success')
         run: echo "CC_EMAIL=${{ vars.SUCCESS_CC_EMAIL }}" >> $GITHUB_ENV
-
+        shell: bash
       # Step 7: Debug - Print CC_EMAIL to verify it's set correctly
       - name: Debug CC_EMAIL
         run: echo "CC_EMAIL=${{ env.CC_EMAIL }}"
+        shell: bash
 
       # Step 8: Upload Playwright test results as artifacts
       - name: Upload Playwright test results
