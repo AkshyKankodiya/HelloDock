@@ -54,6 +54,11 @@ jobs:
         if: steps.playwright-tests.outcome == 'success'
         run: echo "CC_EMAIL=" >> $GITHUB_ENV
 
+
+      # Debug: Print CC_EMAIL value to verify it is correctly set
+      - name: Debug CC_EMAIL
+        run: echo "CC_EMAIL=${{ env.CC_EMAIL }}"
+
       # Upload Playwright test results as artifacts
       - name: Upload Playwright test results
         uses: actions/upload-artifact@v3
