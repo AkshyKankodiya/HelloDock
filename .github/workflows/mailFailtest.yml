@@ -81,7 +81,7 @@ jobs:
           from: Hellodock Team <no-reply@hellodock.com>
           to: rahul.trello2020@gmail.com
           cc: ${{ env.CC_EMAIL }}  # Adds CC only if tests fail
-          subject: Test Automation Build Job Status: ${{ job.status }}
+          subject: 'Test Automation Build Job Status: ${{ job.status }}'
           body: |
             Hello Team,
 
