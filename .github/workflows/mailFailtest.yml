@@ -1,4 +1,4 @@
-name: mail on faili test
+name: mail on failed test
 
 on:
   schedule:
@@ -12,7 +12,7 @@ on:
           - https://app.hellodock.com/
           - https://qa.hellodock.com/
           - https://dev.hellodock.com/
-          
+
 jobs:
   test:
     runs-on: windows-latest
@@ -29,31 +29,28 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      #- name: Install Playwright browsers
-      #  run: npx playwright install
-
       - name: Install Playwright Allure
         run: npm install --save-dev allure-playwright
 
-      # Run Playwright tests and allow them to fail without stopping the workflow
+      # Run Playwright tests and capture the exit code
       - name: Run Playwright tests
         env:
           BASE_URL: ${{ github.event.inputs.choice }}
         run: |
-          npx playwright test --reporter=line,allure-playwright
-        continue-on-error: true
+          npx playwright test --reporter=line,allure-playwright || EXIT_CODE=$?  # Capture exit code on failure
+          echo "EXIT_CODE=$EXIT_CODE" >> $GITHUB_ENV  # Store exit code in GitHub environment variable
+        continue-on-error: true  # Allow workflow to proceed even if tests fail
         id: playwright-tests
 
-      # Set CC email if there were test failures
+      # Set CC email if the Playwright tests failed (EXIT_CODE != 0)
       - name: Set CC Email for test failures
-        if: steps.playwright-tests.outcome == 'failure'
+        if: env.EXIT_CODE != '0'
         run: echo "CC_EMAIL=tqa8769@gmail.com" >> $GITHUB_ENV
 
-      # Set CC email to empty if all tests passed
+      # Set CC email to empty if all tests passed (EXIT_CODE == 0)
       - name: Set CC Email for success (No CC)
-        if: steps.playwright-tests.outcome == 'success'
+        if: env.EXIT_CODE == '0'
         run: echo "CC_EMAIL=" >> $GITHUB_ENV
-
 
       # Debug: Print CC_EMAIL value to verify it is correctly set
       - name: Debug CC_EMAIL
@@ -78,7 +75,7 @@ jobs:
         run: |
           echo "The Build URL is: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
 
-        # Send email notification with conditional CC based on test result
+      # Send email notification with conditional CC based on test result
       - name: Send email notification
         if: always()  # Always send the email
         env: 
