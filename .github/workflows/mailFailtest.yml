@@ -1,4 +1,4 @@
-name: mail on failure test
+name: mail on failure test1
 
 on:
   schedule:
