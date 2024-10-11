@@ -29,28 +29,29 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      #- name: Install Playwright browsers
-      #  run: npx playwright install
+      - name: Install Playwright browsers
+        run: npx playwright install
 
       - name: Install Playwright Allure
         run: npm install --save-dev allure-playwright
 
-      # Run Playwright tests
+      # Run Playwright tests and allow them to fail without stopping the workflow
       - name: Run Playwright tests
         env:
           BASE_URL: ${{ github.event.inputs.choice }}
         run: |
           npx playwright test --reporter=line,allure-playwright
         continue-on-error: true
+        id: playwright-tests
 
       # Set CC email if there were test failures
       - name: Set CC Email for test failures
-        if: failure()
+        if: steps.playwright-tests.outcome == 'failure'
         run: echo "CC_EMAIL=tqa8769@gmail.com" >> $GITHUB_ENV
 
       # Set CC email to empty if all tests passed
       - name: Set CC Email for success (No CC)
-        if: success()
+        if: steps.playwright-tests.outcome == 'success'
         run: echo "CC_EMAIL=" >> $GITHUB_ENV
 
       # Upload Playwright test results as artifacts
@@ -70,62 +71,4 @@ jobs:
       # Get Build URL for email
       - name: Get Build URL
         run: |
-          echo "The Build URL is: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-
-      # Send email notification with conditional CC based on test result
-      - name: Send email notification
-        if: always()  # Always send the email
-        uses: dawidd6/action-send-mail@v3
-        with:
-          from: Hellodock Team <no-reply@hellodock.com>
-          to: rahul.trello2020@gmail.com
-          cc: ${{ env.CC_EMAIL }}  # Adds CC only if tests fail
-          subject: Test Automation Build Job Status:${{ job.status }}
-          body: |
-            Hello Team,
-
-            The build process for your smoke test is completed. Please use the link below to view the result.
-
-            Build URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
-            Environment: ${{ github.event.inputs.choice }}
-            
-            Thanks,
-            HelloDock Automation Team
-          server_address: email-smtp.us-east-2.amazonaws.com
-          server_port: 587
-          username: ${{ secrets.SMTP_USER }}
-          password: ${{ secrets.SMTP_PASSWORD }}
-          secure: false
-
-  publish:
-    runs-on: windows-latest
-    needs: test
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Download Allure Results
-        uses: actions/download-artifact@v3
-        with:
-          name: allure-results
-          path: allure-results
-
-      - name: Install Allure CLI
-        run: |
-          npm install -g allure-commandline --save-dev
-          allure --version
-
-      - name: Generate Allure Report
-        run: |
-          allure generate allure-results -o allure-report
-
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./allure-report
-
-      - name: Print Allure Report URL
-        run: |
-          echo "Allure report is available at: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/"
+          echo "The Build URL is: https://
