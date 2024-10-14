@@ -27,9 +27,6 @@ jobs:
           node-version: '20'
 
       - name: Install dependencies
-        run: npm install
-
-      - name: Install dependencies
         run: npm ci
 
       - name: Install Playwright browsers
@@ -88,7 +85,7 @@ jobs:
             The build process for your smoke test is completed. Please use the link below to view the result.
 
             Build URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
-            Allure Report URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/reports/${{ github.run_id }}/
+            Allure Report URL: https://akshykankodiya.github.io/HelloDock/${{ github.run_id }}/
             Environment: ${{ github.event.inputs.choice }}
             
             Thanks,
@@ -122,16 +119,11 @@ jobs:
         run: |
           allure generate allure-results -o allure-report
 
-      - name: Deploy Allure Report with Build Number
-        run: |
-          mkdir -p ./reports/${{ github.run_id }}
-          mv ./allure-report/* ./reports/${{ github.run_id }}/
-
-      - name: Deploy to GitHub Pages
+      - name: Deploy Allure Report to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./reports
+          publish_dir: ./allure-report  # Make sure this points to the generated report directory
 
       - name: Print Allure Report URL
         run: |
