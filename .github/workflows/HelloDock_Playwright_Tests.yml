@@ -29,8 +29,8 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Install Playwright browsers
-        run: npx playwright install
+     # - name: Install Playwright browsers
+     #   run: npx playwright install
 
       - name: Install Playwright Allure
         run: npm install --save-dev allure-playwright
@@ -39,7 +39,7 @@ jobs:
         env:
           BASE_URL: ${{ github.event.inputs.choice }}
         run: |
-          npx playwright test pass_Test.spec.ts --reporter=line,allure-playwright
+          npx playwright test --reporter=line,allure-playwright
         continue-on-error: true
         id: playwright-tests
 
