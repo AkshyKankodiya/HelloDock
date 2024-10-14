@@ -135,4 +135,4 @@ jobs:
 
       - name: Print Allure Report URL
         run: |
-          echo "Allure report is available at: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/reports/${{ github.run_id }}/"
+          echo "Allure report is available at: https://akshykankodiya.github.io/HelloDock/${{ github.run_id }}/"
