@@ -14,147 +14,50 @@ on:
           - https://dev.hellodock.com/
 
 jobs:
-  test:
+  build:
+
     runs-on: windows-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+    - uses: actions/checkout@v2
+    - name: Use Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '14'
+        cache: 'npm'
+    - run: npm ci
+    - run: npx playwright install
+    - run: npm test
+  
+    - uses: actions/upload-artifact@master
+      with:
+        name: allure-results
+        path: allure-results
+        retention-days: 20
+        
+    - name: Get Allure history
+      uses: actions/checkout@v2
+      if: always()
+      continue-on-error: true
+      with:
+        ref: gh-pages
+        path: gh-pages
+    
+    - name: Test marketplace action
+      uses: simple-elf/allure-report-action@master
+      if: always()
+      id: allure-report
+      with:
+        allure_results: allure-results
+        gh_pages: gh-pages
+        allure_report: allure-report
+        allure_history: allure-history
+        keep_reports: 20
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Install Playwright browsers
-        run: npx playwright install
-
-      - name: Install Playwright Allure
-        run: npm install --save-dev allure-playwright
-
-      - name: Get Allure History from gh-pages branch 🛎️ 🛎️ 🛎️
-        uses: actions/checkout@v4.1.0
-        if: always()
-        continue-on-error: true
-        with:
-            ref: gh-pages
-            path: gh-pages
-
-      - name: Run Playwright tests
-        env:
-          BASE_URL: ${{ github.event.inputs.choice }}
-        run: |
-          npx playwright test pass_Test.spec.ts --reporter=line,allure-playwright
-        continue-on-error: true
-        id: playwright-tests
-
-      - name: Set CC Email for test failures
-        if: (steps.playwright-tests.outcome == 'failure')
-        run: echo "CC_EMAIL=${{ vars.FAILURE_CC_EMAIL }}" >> $GITHUB_ENV
-        shell: bash
-
-      - name: Set CC Email for test successes
-        if: (steps.playwright-tests.outcome == 'success')
-        run: echo "CC_EMAIL=${{ vars.SUCCESS_CC_EMAIL }}" >> $GITHUB_ENV
-        shell: bash
-
-      - name: Upload Playwright test results
-        uses: actions/upload-artifact@v3
-        with:
-          name: test-results
-          path: '**/test-results/**'
-
-     # - name: Upload Allure Results
-     #   uses: actions/upload-artifact@v3
-     #   with:
-     #     name: allure-results
-     #     path: ./allure-results
-
-      - name: Get Build URL
-        run: |
-          echo "The Build URL is: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-
-      - name: Send email notification
-        if: always()
-        env:
-          CC_EMAIL: ${{ env.CC_EMAIL }}
-        uses: dawidd6/action-send-mail@v3
-        with:
-          from: Hellodock Team <no-reply@hellodock.com>
-          to: rahul.trello2020@gmail.com
-          cc: ${{ env.CC_EMAIL }}
-          subject: 'Test Automation Build Job Status: ${{ job.status }}'
-          body: |
-            Hello Team,
-
-            The build process for your smoke test is completed. Please use the link below to view the result.
-
-            Build URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
-            Allure Report URL: https://akshykankodiya.github.io/HelloDock/${{ github.run_id }}/
-            Environment: ${{ github.event.inputs.choice }}
-            
-            Thanks,
-            HelloDock Automation Team
-          server_address: email-smtp.us-east-2.amazonaws.com
-          server_port: 587
-          username: ${{ secrets.SMTP_USER }}
-          password: ${{ secrets.SMTP_PASSWORD }}
-          secure: false
-
- 
-      - name: Add environment details to allure results directory 🧳 🧳 🧳
-        id: add-environment-details
-        if: always()
-        run: |
-          echo "Environment=${TEST_ENV}" >> allure-results/environment.properties
-          echo "BuildTime=${NOW}" >> allure-results/environment.properties
-          echo "Run=${{ github.run_number }}" >> allure-results/environment.properties
-          echo "Branch=refs/heads/main" >> allure-results/environment.properties
-          cat allure-results/environment.properties
-           cp allure-config/categories.json allure-results/categories.json
-
-      - name: Allure Report Action from Marketplace 📚 📚 📚
-        uses: simple-elf/allure-report-action@v1.7
-        if: always()
-        with:
-          allure_results: allure-results
-          gh_pages: gh-pages
-          allure_report: allure-report
-          allure_history: allure-history
-          keep_reports: 5
-
-      - name: Upload allure report   🔺 🔺 🔺
-        uses: actions/upload-artifact@v4.0.0
-        with:
-              name: allure-history
-              path: allure-history
-
-  deploy_allure_reports:
-    needs: [test]
-    timeout-minutes: 60
-    runs-on: ubuntu-latest
-    env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    steps:
-        - name: Checkout 🛎️
-          uses: actions/checkout@v4
-          with:
-              fetch-depth: 0
-
-        - name: Download Artifacts 🔻
-          uses: actions/download-artifact@v4.1.0
-          with:
-              name: allure-history
-              path: allure-history
-
-        - name: Deploy report to Github Pages 🚀 🚀 🚀
-          if: always()
-          uses: JamesIves/github-pages-deploy-action@v4.5.0
-          with:
-              folder: allure-history
-              branch: gh-pages
-              commit-message: Deploy report to Github Pages
-              single-commit: true
+    - name: Deploy report to Github Pages
+      if: always()
+      uses: peaceiris/actions-gh-pages@v2
+      env:
+        PERSONAL_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        PUBLISH_BRANCH: gh-pages
+        PUBLISH_DIR: allure-history
