@@ -110,6 +110,13 @@ jobs:
           name: allure-results
           path: allure-results
 
+      # Step to preserve Allure history
+      - name: Download previous Allure history
+        uses: actions/download-artifact@v3
+        with:
+          name: allure-history
+        continue-on-error: true
+
       - name: Install Allure CLI
         run: |
           npm install -g allure-commandline --save-dev
@@ -117,13 +124,22 @@ jobs:
 
       - name: Generate Allure Report
         run: |
+          mkdir -p allure-results/history
+          cp -r allure-history/* allure-results/history || true
           allure generate allure-results -o allure-report
+
+      # Step to upload new Allure history after the report is generated
+      - name: Upload new Allure history
+        uses: actions/upload-artifact@v3
+        with:
+          name: allure-history
+          path: allure-report/history
 
       - name: Deploy Allure Report to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./allure-report  # Make sure this points to the generated report directory
+          publish_dir: ./allure-report/${{ github.run_id }}  # Unique directory for each build
 
       - name: Print Allure Report URL
         run: |
