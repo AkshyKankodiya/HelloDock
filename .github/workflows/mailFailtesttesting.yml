@@ -125,7 +125,10 @@ jobs:
       - name: Generate Allure Report
         run: |
           mkdir -p allure-results/history
-          cp -r allure-history/* allure-results/history || true
+          # Check if history exists before copying
+          if [ -d allure-history ]; then
+            cp -r allure-history/* allure-results/history
+          fi
           allure generate allure-results -o allure-report
 
       # Step to upload new Allure history after the report is generated
