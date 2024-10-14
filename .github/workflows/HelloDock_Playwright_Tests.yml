@@ -39,14 +39,6 @@ jobs:
       - name: Install Playwright Allure
         run: npm install --save-dev allure-playwright
 
-      # Run Playwright tests
-      - name: Run Playwright tests
-        env:
-          BASE_URL: ${{ github.event.inputs.choice }}
-        run: |
-          npx playwright test --reporter=line,allure-playwright
-        continue-on-error: true
-
       # Run Playwright tests (allow them to fail without stopping the workflow)
       - name: Run Playwright tests
         env:
