@@ -133,7 +133,7 @@ jobs:
               path: allure-history
 
   deploy_allure_reports:
-    needs: [run_tests]
+    needs: [test]
     timeout-minutes: 60
     runs-on: ubuntu-latest
     env:
