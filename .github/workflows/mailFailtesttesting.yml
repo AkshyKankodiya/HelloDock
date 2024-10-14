@@ -1,8 +1,8 @@
-name: mail on failure testnew777
+name: mail on failure test171717
 
 on:
   schedule:
-    - cron: "0 6,12,18,0 * * *"
+  - cron: "0 6,12,18,0 * * *"  
   workflow_dispatch:
     inputs:
       choice:
@@ -12,6 +12,7 @@ on:
           - https://app.hellodock.com/
           - https://qa.hellodock.com/
           - https://dev.hellodock.com/
+          
 
 jobs:
   test:
@@ -43,7 +44,7 @@ jobs:
         env:
           BASE_URL: ${{ github.event.inputs.choice }}
         run: |
-           npx playwright test pass_Test.spec.ts --reporter=line,allure-playwright
+          npx playwright test --reporter=line,allure-playwright
         continue-on-error: true
         id: playwright-tests
 
@@ -57,7 +58,6 @@ jobs:
         if: (steps.playwright-tests.outcome == 'success')
         run: echo "CC_EMAIL=${{ vars.SUCCESS_CC_EMAIL }}" >> $GITHUB_ENV
         shell: bash
-
       # Debug - Print CC_EMAIL to verify it's set correctly
       - name: Debug CC_EMAIL
         run: echo "CC_EMAIL=${{ env.CC_EMAIL }}"
@@ -82,7 +82,7 @@ jobs:
         run: |
           echo "The Build URL is: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
 
-      # Send email notification with conditional CC based on test result
+        # Step 11: Send email notification with conditional CC based on test result
       - name: Send email notification
         if: always()  # Always send the email
         env:
@@ -125,20 +125,29 @@ jobs:
 
       - name: Install Allure CLI
         run: |
-          npm install -g allure-commandline --save-dev
-          allure --version
-
+            npm install -g allure-commandline --save-dev
+            allure --version
+  
       - name: Generate Allure Report
         run: |
-          allure generate allure-results -o allure-report
+            allure generate allure-results -o allure-report-${{ github.run_number }}
+  
+      - name: Debug Allure Report Directory
+        run: |
+            echo "Listing the Allure report directory"
+            ls -R allure-report-${{ github.run_number }}
 
-      # Deploy to GitHub Pages with unique build number in the report URL
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./reports/${{ github.run_number }}
+            github_token: ${{ secrets.GITHUB_TOKEN }}
+            publish_dir: ./reports/${{ github.run_number }}
 
+      - name: List files in gh-pages branch after deployment
+        run: |
+          git clone --branch gh-pages https://github.com/${{ github.repository }} gh-pages
+              ls -R gh-pages
+    
       - name: Print Allure Report URL
         run: |
-          echo "Allure report is available at: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/reports/${{ github.run_number }}/index.html"
+              echo "Allure report is available at: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/reports/${{ github.run_number }}"
