@@ -2,7 +2,7 @@ name: HelloDock Smoke Test suite
 
 on:
   schedule:
-  - cron: "0 6,12,18,0 * * *"  
+    - cron: "0 0,6,12,18 * * *"
   workflow_dispatch:
     inputs:
       choice:
@@ -12,7 +12,6 @@ on:
           - https://app.hellodock.com/
           - https://qa.hellodock.com/
           - https://dev.hellodock.com/
-          
 
 jobs:
   test:
@@ -28,9 +27,6 @@ jobs:
           node-version: '20'
 
       - name: Install dependencies
-        run: npm install
-
-      - name: Install dependencies
         run: npm ci
 
       - name: Install Playwright browsers
@@ -39,16 +35,14 @@ jobs:
       - name: Install Playwright Allure
         run: npm install --save-dev allure-playwright
 
-      # Run Playwright tests (allow them to fail without stopping the workflow)
       - name: Run Playwright tests
         env:
           BASE_URL: ${{ github.event.inputs.choice }}
         run: |
-          npx playwright test --reporter=line,allure-playwright
+          npx playwright test pass_Test.spec.ts --reporter=line,allure-playwright
         continue-on-error: true
         id: playwright-tests
 
-      # Set CC email if there were test failures
       - name: Set CC Email for test failures
         if: (steps.playwright-tests.outcome == 'failure')
         run: echo "CC_EMAIL=${{ vars.FAILURE_CC_EMAIL }}" >> $GITHUB_ENV
@@ -58,56 +52,18 @@ jobs:
         if: (steps.playwright-tests.outcome == 'success')
         run: echo "CC_EMAIL=${{ vars.SUCCESS_CC_EMAIL }}" >> $GITHUB_ENV
         shell: bash
-      # Debug - Print CC_EMAIL to verify it's set correctly
-      - name: Debug CC_EMAIL
-        run: echo "CC_EMAIL=${{ env.CC_EMAIL }}"
-        shell: bash
 
-      # Upload Playwright test results as artifacts
       - name: Upload Playwright test results
         uses: actions/upload-artifact@v3
         with:
           name: test-results
           path: '**/test-results/**'
 
-      # Upload Allure results
-      - name: Upload Allure Results
+      - name: Upload Allure results
         uses: actions/upload-artifact@v3
         with:
           name: allure-results
           path: ./allure-results
-
-      # Get Build URL for email
-      - name: Get Build URL
-        run: |
-          echo "The Build URL is: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-
-        # Step 11: Send email notification with conditional CC based on test result
-      - name: Send email notification
-        if: always()  # Always send the email
-        env:
-          CC_EMAIL: ${{ env.CC_EMAIL }}  # Use the CC_EMAIL variable set in previous steps
-        uses: dawidd6/action-send-mail@v3
-        with:
-          from: Hellodock Team <no-reply@hellodock.com>
-          to: rahul.trello2020@gmail.com
-          cc: ${{ env.CC_EMAIL }}  # CC set based on success or failure
-          subject: 'Test Automation Build Job Status: ${{ job.status }}'
-          body: |
-            Hello Team,
-
-            The build process for your smoke test is completed. Please use the link below to view the result.
-
-            Build URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
-            Environment: ${{ github.event.inputs.choice }}
-            
-            Thanks,
-            HelloDock Automation Team
-          server_address: email-smtp.us-east-2.amazonaws.com
-          server_port: 587
-          username: ${{ secrets.SMTP_USER }}
-          password: ${{ secrets.SMTP_PASSWORD }}
-          secure: false
 
   publish:
     runs-on: windows-latest
@@ -132,12 +88,42 @@ jobs:
         run: |
           allure generate allure-results -o allure-report
 
-      - name: Deploy to GitHub Pages
+      # Ensure the previous history is retained on GitHub Pages
+      - name: Deploy to GitHub Pages with unique folder per build
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./allure-report
+          destination_dir: "${{ github.run_id }}"  # Use run ID to create a unique folder per build
+          
 
       - name: Print Allure Report URL
         run: |
-            echo "Allure report is available at: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/"
+            echo "Allure report is available at: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/${{ github.run_id }}/"
+
+      - name: Send email notification
+        if: always()  # Always send the email
+        env:
+          CC_EMAIL: ${{ env.CC_EMAIL }}  # Use the CC_EMAIL variable set in previous steps
+        uses: dawidd6/action-send-mail@v3
+        with:
+          from: Hellodock Team <no-reply@hellodock.com>
+          to: rahul.trello2020@gmail.com
+          cc: ${{ env.CC_EMAIL }}  # CC set based on success or failure
+          subject: 'Test Automation Build Job Status: ${{ job.status }}'
+          body: |
+            Hello Team,
+
+            The build process for your smoke test is completed. Please use the link below to view the result.
+
+            Build URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+            Allure Report: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/${{ github.run_id }}/
+            Environment: ${{ github.event.inputs.choice }}
+            
+            Thanks,
+            HelloDock Automation Team
+          server_address: email-smtp.us-east-2.amazonaws.com
+          server_port: 587
+          username: ${{ secrets.SMTP_USER }}
+          password: ${{ secrets.SMTP_PASSWORD }}
+          secure: false

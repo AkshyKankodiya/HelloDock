@@ -2,7 +2,7 @@ name: mail on failure test171717
 
 on:
   schedule:
-    - cron: "0 6,12,18,0 * * *"
+    - cron: "0 0,6,12,18 * * *"
   workflow_dispatch:
     inputs:
       choice:
@@ -95,6 +95,7 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./allure-report
           destination_dir: "${{ github.run_id }}"  # Use run ID to create a unique folder per build
+          
 
       - name: Print Allure Report URL
         run: |
