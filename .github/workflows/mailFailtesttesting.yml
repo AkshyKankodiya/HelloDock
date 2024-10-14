@@ -2,7 +2,7 @@ name: mail on failure test171717
 
 on:
   schedule:
-  - cron: "0 6,12,18,0 * * *"  
+    - cron: "0 6,12,18,0 * * *"
   workflow_dispatch:
     inputs:
       choice:
@@ -12,7 +12,6 @@ on:
           - https://app.hellodock.com/
           - https://qa.hellodock.com/
           - https://dev.hellodock.com/
-          
 
 jobs:
   test:
@@ -39,7 +38,6 @@ jobs:
       - name: Install Playwright Allure
         run: npm install --save-dev allure-playwright
 
-      # Run Playwright tests (allow them to fail without stopping the workflow)
       - name: Run Playwright tests
         env:
           BASE_URL: ${{ github.event.inputs.choice }}
@@ -48,7 +46,6 @@ jobs:
         continue-on-error: true
         id: playwright-tests
 
-      # Set CC email if there were test failures
       - name: Set CC Email for test failures
         if: (steps.playwright-tests.outcome == 'failure')
         run: echo "CC_EMAIL=${{ vars.FAILURE_CC_EMAIL }}" >> $GITHUB_ENV
@@ -58,40 +55,32 @@ jobs:
         if: (steps.playwright-tests.outcome == 'success')
         run: echo "CC_EMAIL=${{ vars.SUCCESS_CC_EMAIL }}" >> $GITHUB_ENV
         shell: bash
-      # Debug - Print CC_EMAIL to verify it's set correctly
-      - name: Debug CC_EMAIL
-        run: echo "CC_EMAIL=${{ env.CC_EMAIL }}"
-        shell: bash
 
-      # Upload Playwright test results as artifacts
       - name: Upload Playwright test results
         uses: actions/upload-artifact@v3
         with:
           name: test-results
           path: '**/test-results/**'
 
-      # Upload Allure results
       - name: Upload Allure Results
         uses: actions/upload-artifact@v3
         with:
           name: allure-results
           path: ./allure-results
 
-      # Get Build URL for email
       - name: Get Build URL
         run: |
           echo "The Build URL is: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
 
-        # Step 11: Send email notification with conditional CC based on test result
       - name: Send email notification
-        if: always()  # Always send the email
+        if: always()
         env:
-          CC_EMAIL: ${{ env.CC_EMAIL }}  # Use the CC_EMAIL variable set in previous steps
+          CC_EMAIL: ${{ env.CC_EMAIL }}
         uses: dawidd6/action-send-mail@v3
         with:
           from: Hellodock Team <no-reply@hellodock.com>
           to: rahul.trello2020@gmail.com
-          cc: ${{ env.CC_EMAIL }}  # CC set based on success or failure
+          cc: ${{ env.CC_EMAIL }}
           subject: 'Test Automation Build Job Status: ${{ job.status }}'
           body: |
             Hello Team,
@@ -99,6 +88,7 @@ jobs:
             The build process for your smoke test is completed. Please use the link below to view the result.
 
             Build URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+            Allure Report URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/reports/${{ github.run_id }}/
             Environment: ${{ github.event.inputs.choice }}
             
             Thanks,
@@ -115,7 +105,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Download Allure Results
         uses: actions/download-artifact@v3
@@ -132,13 +122,17 @@ jobs:
         run: |
           allure generate allure-results -o allure-report
 
+      - name: Deploy Allure Report with Build Number
+        run: |
+          mkdir -p ./reports/${{ github.run_id }}
+          mv ./allure-report/* ./reports/${{ github.run_id }}/
+
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./allure-report
+          publish_dir: ./reports
 
       - name: Print Allure Report URL
         run: |
-            echo "Allure report is available at: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/"
-            echo "Allure report is available at: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/reports/${{ github.run_number }}"
+          echo "Allure report is available at: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/reports/${{ github.run_id }}/"
