@@ -47,14 +47,29 @@ jobs:
           npx playwright test --reporter=line,allure-playwright
         continue-on-error: true
 
-      # Check if Playwright tests failed and set CC email based on that
-      - name: Set CC Email for test failures
-        if: failure()
-        run: echo "CC_EMAIL=tqa8769@gmail.com" >> $GITHUB_ENV
+      # Run Playwright tests (allow them to fail without stopping the workflow)
+      - name: Run Playwright tests
+        env:
+          BASE_URL: ${{ github.event.inputs.choice }}
+        run: |
+          npx playwright test --reporter=line,allure-playwright
+        continue-on-error: true
+        id: playwright-tests
 
-      - name: Set CC Email for success (No CC)
-        if: success()
-        run: echo "CC_EMAIL=" >> $GITHUB_ENV
+      # Set CC email if there were test failures
+      - name: Set CC Email for test failures
+        if: (steps.playwright-tests.outcome == 'failure')
+        run: echo "CC_EMAIL=${{ vars.FAILURE_CC_EMAIL }}" >> $GITHUB_ENV
+        shell: bash
+
+      - name: Set CC Email for test successes
+        if: (steps.playwright-tests.outcome == 'success')
+        run: echo "CC_EMAIL=${{ vars.SUCCESS_CC_EMAIL }}" >> $GITHUB_ENV
+        shell: bash
+      # Debug - Print CC_EMAIL to verify it's set correctly
+      - name: Debug CC_EMAIL
+        run: echo "CC_EMAIL=${{ env.CC_EMAIL }}"
+        shell: bash
 
       # Upload Playwright test results as artifacts
       - name: Upload Playwright test results
@@ -75,15 +90,17 @@ jobs:
         run: |
           echo "The Build URL is: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
 
-      # Send email notification with conditional CC based on test result
+        # Step 11: Send email notification with conditional CC based on test result
       - name: Send email notification
         if: always()  # Always send the email
+        env:
+          CC_EMAIL: ${{ env.CC_EMAIL }}  # Use the CC_EMAIL variable set in previous steps
         uses: dawidd6/action-send-mail@v3
         with:
           from: Hellodock Team <no-reply@hellodock.com>
           to: rahul.trello2020@gmail.com
-          cc: ${{ env.CC_EMAIL }}  # Adds CC only if tests fail
-          subject: Test Automation Build Job Status:${{ job.status }}
+          cc: ${{ env.CC_EMAIL }}  # CC set based on success or failure
+          subject: 'Test Automation Build Job Status: ${{ job.status }}'
           body: |
             Hello Team,
 
