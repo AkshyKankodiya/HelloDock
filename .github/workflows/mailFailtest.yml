@@ -134,19 +134,19 @@ jobs:
           npm install -g allure-commandline --save-dev
           allure --version
 
-      # Step 15: Generate Allure Report
+      # Step 15: Generate Allure Report with unique directory name
       - name: Generate Allure Report
         run: |
-          allure generate allure-results -o allure-report
+          allure generate allure-results -o allure-report-${{ github.run_number }}
 
       # Step 16: Deploy to GitHub Pages
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./allure-report
+          publish_dir: ./allure-report-${{ github.run_number }}
 
       # Step 17: Print Allure Report URL
       - name: Print Allure Report URL
         run: |
-          echo "Allure report is available at: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/"
+          echo "Allure report is available at: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/reports/${{ github.run_number }}"
