@@ -35,6 +35,14 @@ jobs:
       - name: Install Playwright Allure
         run: npm install --save-dev allure-playwright
 
+      - name: Get Allure History from gh-pages branch 🛎️ 🛎️ 🛎️
+        uses: actions/checkout@v4.1.0
+        if: always()
+        continue-on-error: true
+        with:
+            ref: gh-pages
+            path: gh-pages
+
       - name: Run Playwright tests
         env:
           BASE_URL: ${{ github.event.inputs.choice }}
@@ -59,11 +67,11 @@ jobs:
           name: test-results
           path: '**/test-results/**'
 
-      - name: Upload Allure Results
-        uses: actions/upload-artifact@v3
-        with:
-          name: allure-results
-          path: ./allure-results
+     # - name: Upload Allure Results
+     #   uses: actions/upload-artifact@v3
+     #   with:
+     #     name: allure-results
+     #     path: ./allure-results
 
       - name: Get Build URL
         run: |
@@ -96,54 +104,57 @@ jobs:
           password: ${{ secrets.SMTP_PASSWORD }}
           secure: false
 
-  publish:
-    runs-on: windows-latest
-    needs: test
+ 
+      - name: Add environment details to allure results directory 🧳 🧳 🧳
+       id: add-environment-details
+       if: always()
+       run: |
+          echo "Environment=${TEST_ENV}" >> allure-results/environment.properties
+          echo "BuildTime=${NOW}" >> allure-results/environment.properties
+          echo "Run=${{ github.run_number }}" >> allure-results/environment.properties
+          echo "Branch=refs/heads/main" >> allure-results/environment.properties
+          cat allure-results/environment.properties
+           cp allure-config/categories.json allure-results/categories.json
 
+      - name: Allure Report Action from Marketplace 📚 📚 📚
+        uses: simple-elf/allure-report-action@v1.7
+        if: always()
+        with:
+          allure_results: allure-results
+          gh_pages: gh-pages
+          allure_report: allure-report
+          allure_history: allure-history
+          keep_reports: 5
+
+      - name: Upload allure report   🔺 🔺 🔺
+        uses: actions/upload-artifact@v4.0.0
+        with:
+              name: allure-history
+              path: allure-history
+
+deploy_allure_reports:
+    needs: [run_tests]
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+        - name: Checkout 🛎️
+          uses: actions/checkout@v4
+          with:
+              fetch-depth: 0
 
-      - name: Download Allure Results
-        uses: actions/download-artifact@v3
-        with:
-          name: allure-results
-          path: allure-results
+        - name: Download Artifacts 🔻
+          uses: actions/download-artifact@v4.1.0
+          with:
+              name: allure-history
+              path: allure-history
 
-      # Step to preserve Allure history
-      - name: Download previous Allure history
-        uses: actions/download-artifact@v3
-        with:
-          name: allure-history
-        continue-on-error: true
-
-      - name: Install Allure CLI
-        run: |
-          npm install -g allure-commandline --save-dev
-          allure --version
-
-      - name: Generate Allure Report
-        run: |
-          mkdir -p allure-results/history
-          # Check if history exists before copying
-          if [ -d allure-history ]; then
-            cp -r allure-history/* allure-results/history
-          fi
-          allure generate allure-results -o allure-report
-
-      # Step to upload new Allure history after the report is generated
-      - name: Upload new Allure history
-        uses: actions/upload-artifact@v3
-        with:
-          name: allure-history
-          path: allure-report/history
-
-      - name: Deploy Allure Report to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./allure-report/${{ github.run_id }}  # Unique directory for each build
-
-      - name: Print Allure Report URL
-        run: |
-          echo "Allure report is available at: https://akshykankodiya.github.io/HelloDock/${{ github.run_id }}/"
+        - name: Deploy report to Github Pages 🚀 🚀 🚀
+          if: always()
+          uses: JamesIves/github-pages-deploy-action@v4.5.0
+          with:
+              folder: allure-history
+              branch: gh-pages
+              commit-message: Deploy report to Github Pages
+              single-commit: true
