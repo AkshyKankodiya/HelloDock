@@ -95,6 +95,11 @@ jobs:
         run: |
           allure generate allure-results -o allure-report-${{ github.run_number }}
 
+      - name: Debug Allure Report Directory
+        run: |
+          echo "Listing the Allure report directory"
+          ls -R allure-report-${{ github.run_number }}
+
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
@@ -105,7 +110,6 @@ jobs:
         run: |
           echo "Allure report is available at: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/reports/${{ github.run_number }}"
 
-      # Step to list files in gh-pages branch to debug deployment
       - name: List files in gh-pages branch
         run: |
           git clone --branch gh-pages https://github.com/${{ github.repository }} gh-pages
