@@ -106,9 +106,9 @@ jobs:
 
  
       - name: Add environment details to allure results directory 🧳 🧳 🧳
-       id: add-environment-details
-       if: always()
-       run: |
+        id: add-environment-details
+        if: always()
+        run: |
           echo "Environment=${TEST_ENV}" >> allure-results/environment.properties
           echo "BuildTime=${NOW}" >> allure-results/environment.properties
           echo "Run=${{ github.run_number }}" >> allure-results/environment.properties
@@ -132,7 +132,7 @@ jobs:
               name: allure-history
               path: allure-history
 
-deploy_allure_reports:
+  deploy_allure_reports:
     needs: [run_tests]
     timeout-minutes: 60
     runs-on: ubuntu-latest
