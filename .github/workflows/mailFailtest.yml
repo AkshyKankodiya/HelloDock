@@ -2,7 +2,7 @@ name: mail on failure test1
 
 on:
   schedule:
-    - cron: "0 6,12,18,0 * * *"  
+    - cron: "0 6,12,18,0 * * *"
   workflow_dispatch:
     inputs:
       choice:
@@ -103,14 +103,14 @@ jobs:
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./allure-report-${{ github.run_number }}
+            github_token: ${{ secrets.GITHUB_TOKEN }}
+            publish_dir: ./reports/${{ github.run_number }}
+
+      - name: List files in gh-pages branch after deployment
+        run: |
+          git clone --branch gh-pages https://github.com/${{ github.repository }} gh-pages
+          ls -R gh-pages
 
       - name: Print Allure Report URL
         run: |
           echo "Allure report is available at: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/reports/${{ github.run_number }}"
-
-      - name: List files in gh-pages branch
-        run: |
-          git clone --branch gh-pages https://github.com/${{ github.repository }} gh-pages
-          ls -R gh-pages
