@@ -65,6 +65,33 @@ jobs:
           name: allure-results
           path: ./allure-results
 
+      - name: Send email notification
+        if: always()  # Always send the email
+        env:
+          CC_EMAIL: ${{ env.CC_EMAIL }}  # Use the CC_EMAIL variable set in previous steps
+        uses: dawidd6/action-send-mail@v3
+        with:
+          from: Hellodock Team <no-reply@hellodock.com>
+          to: rahul.trello2020@gmail.com
+          cc: ${{ env.CC_EMAIL }}  # CC set based on success or failure
+          subject: 'Test Automation Build Job Status: ${{ job.status }}'
+          body: |
+            Hello Team,
+
+            The build process for your smoke test is completed. Please use the link below to view the result.
+
+            Build URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+            Allure Report: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/${{ github.run_id }}/
+            Environment: ${{ github.event.inputs.choice }}
+            
+            Thanks,
+            HelloDock Automation Team
+          server_address: email-smtp.us-east-2.amazonaws.com
+          server_port: 587
+          username: ${{ secrets.SMTP_USER }}
+          password: ${{ secrets.SMTP_PASSWORD }}
+          secure: false
+
   publish:
     runs-on: windows-latest
     needs: test
@@ -100,30 +127,3 @@ jobs:
       - name: Print Allure Report URL
         run: |
             echo "Allure report is available at: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/${{ github.run_id }}/"
-
-      - name: Send email notification
-        if: always()  # Always send the email
-        env:
-          CC_EMAIL: ${{ env.CC_EMAIL }}  # Use the CC_EMAIL variable set in previous steps
-        uses: dawidd6/action-send-mail@v3
-        with:
-          from: Hellodock Team <no-reply@hellodock.com>
-          to: rahul.trello2020@gmail.com
-          cc: ${{ env.CC_EMAIL }}  # CC set based on success or failure
-          subject: 'Test Automation Build Job Status: ${{ job.status }}'
-          body: |
-            Hello Team,
-
-            The build process for your smoke test is completed. Please use the link below to view the result.
-
-            Build URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
-            Allure Report: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/${{ github.run_id }}/
-            Environment: ${{ github.event.inputs.choice }}
-            
-            Thanks,
-            HelloDock Automation Team
-          server_address: email-smtp.us-east-2.amazonaws.com
-          server_port: 587
-          username: ${{ secrets.SMTP_USER }}
-          password: ${{ secrets.SMTP_PASSWORD }}
-          secure: false
