@@ -12,12 +12,10 @@ on:
       choice:
         type: choice
         description: Select The Environment URL
-        default: https://app.hellodock.com/
         options:
           - https://app.hellodock.com/
           - https://qa.hellodock.com/
           - https://dev.hellodock.com/
-        required: false
         
 jobs:
   test:
@@ -88,7 +86,7 @@ jobs:
 
             Build URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
             Allure Report: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/${{ github.run_id }}/
-            Environment: ${{ github.env.BASE_URL}}
+            Environment: ${{ github.event.inputs.choice}} || https://app.hellodock.com/
             
             Thanks,
             HelloDock Automation Team
