@@ -2,7 +2,7 @@ name: HelloDock Smoke Test suite
 
 on:
   schedule:
-   - cron: "*/1 * * * *"
+   - cron: "* * * * *"
   workflow_dispatch:
     inputs:
       choice:
