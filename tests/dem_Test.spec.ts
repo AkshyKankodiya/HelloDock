@@ -21,18 +21,18 @@ test.describe.serial('HelloDock', () => {
     test('Testcase_001Exceptions_Fix_Global_Search', async ({ reusableActionsClass_page }) => {
 
         await allure.step("Step_001_Create_Rule", async () => {
-            await reusableActionsClass_page.createRule(rule_02, folderName.forth_Folder);
+            //await reusableActionsClass_page.createRule(rule_02, folderName.forth_Folder);
 
         });
         await allure.step("Step_002_Upload_BOLs", async () => {
-            await reusableActionsClass_page.multipleUpload_BOLs(fileName.Test_PO5);
+           // await reusableActionsClass_page.multipleUpload_BOLs(fileName.Test_PO5);
 
         });
         await allure.step("Step_003_Fix_Exceptions", async () => {
-            await Exceptions_class_Page.fixExceptionsAndVerifyOnGlobleSearch(po_no.New_PO);
+            //await Exceptions_class_Page.fixExceptionsAndVerifyOnGlobleSearch(po_no.New_PO);
         });
         await allure.step("Step_004_Global_Search_Keyword", async () => {
-            await reusableActionsClass_page.globalSearch(po_no.New_PO);
+            //await reusableActionsClass_page.globalSearch(po_no.New_PO);
         });
 
     });

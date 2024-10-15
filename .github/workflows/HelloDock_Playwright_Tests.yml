@@ -16,6 +16,7 @@ on:
           - https://app.hellodock.com/
           - https://qa.hellodock.com/
           - https://dev.hellodock.com/
+        required: false
         
 jobs:
   test:
@@ -43,7 +44,7 @@ jobs:
         env:
           BASE_URL: ${{ github.event.inputs.choice }}
         run: |
-          npx playwright test exceptions_Test.spec.ts --reporter=line,allure-playwright
+          npx playwright test dem_Test.spec.ts --reporter=line,allure-playwright
         continue-on-error: true
         id: playwright-tests
 
@@ -69,6 +70,13 @@ jobs:
           name: allure-results
           path: ./allure-results
 
+      - name: Set and print BASE_URL
+        run: |
+            # Set BASE_URLp to the input choice or fallback to the default if it's empty
+            BASE_URLp="${{ github.event.inputs.choice || 'https://app.hellodock.com/' }}"
+            echo "BASE_URLp=$BASE_URLp" >> $GITHUB_ENV
+        shell: bash
+
       - name: Send email notification
         if: always()  # Always send the email
         env:
@@ -86,7 +94,7 @@ jobs:
 
             Build URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
             Allure Report: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/${{ github.run_id }}/
-            Environment: ${{ github.event.inputs.choice}} || https://app.hellodock.com/
+            Environment: ${{ env.BASE_URLp }} 
             
             Thanks,
             HelloDock Automation Team
