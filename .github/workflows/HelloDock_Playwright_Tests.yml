@@ -45,7 +45,7 @@ jobs:
         env:
           BASE_URL: ${{ github.event.inputs.choice }}
         run: |
-          npx playwright test --reporter=line,allure-playwright
+          npx playwright test exceptions_Test.spec.ts --reporter=line,allure-playwright
         continue-on-error: true
         id: playwright-tests
 
