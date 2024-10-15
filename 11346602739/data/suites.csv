@@ -1,0 +1,2 @@
+"DESCRIPTION","DURATION IN MS","NAME","PARENT SUITE","START TIME","STATUS","STOP TIME","SUB SUITE","SUITE","TEST CLASS","TEST METHOD"
+"","75064","Testcase_001Exceptions_Fix_Global_Search","","Tue Oct 15 13:02:20 UTC 2024","passed","Tue Oct 15 13:03:35 UTC 2024","HelloDock","dem_Test.spec.ts","",""
