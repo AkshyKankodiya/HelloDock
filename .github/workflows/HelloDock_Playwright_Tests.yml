@@ -11,12 +11,12 @@ on:
       choice:
         type: choice
         description: Select The Environment URL
-        default: https://app.hellodock.com/
+        
         options:
           - https://app.hellodock.com/
           - https://qa.hellodock.com/
           - https://dev.hellodock.com/
-       
+        default: https://app.hellodock.com/
 
 jobs:
   test:
