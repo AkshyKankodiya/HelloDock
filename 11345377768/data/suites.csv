@@ -1,0 +1,3 @@
+"DESCRIPTION","DURATION IN MS","NAME","PARENT SUITE","START TIME","STATUS","STOP TIME","SUB SUITE","SUITE","TEST CLASS","TEST METHOD"
+"","181016","Testcase_001Exceptions_Fix_Global_Search","","Tue Oct 15 11:48:18 UTC 2024","passed","Tue Oct 15 11:51:19 UTC 2024","HelloDock","03_exceptions_Test.spec.ts","",""
+"","101495","Testcase_001Exceptions_Fix_Global_Search","","Tue Oct 15 11:51:19 UTC 2024","passed","Tue Oct 15 11:53:01 UTC 2024","HelloDock","exceptions_Test.spec.ts","",""
