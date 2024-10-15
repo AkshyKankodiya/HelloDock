@@ -2,12 +2,13 @@ name: HelloDock Smoke Test suite
 
 on:
   schedule:
-   - cron: "* * * * *"
+   - cron: "0 * * * *"
   workflow_dispatch:
     inputs:
       choice:
         type: choice
         description: Select The Environment URL
+        default: https://app.hellodock.com/
         options:
           - https://app.hellodock.com/
           - https://qa.hellodock.com/
