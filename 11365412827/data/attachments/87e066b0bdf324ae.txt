@@ -1,0 +1,89 @@
+User Login Succsessfully On Live Env: https://app.hellodock.com/
+All Rules Deleted
+Total Uploaded PO: 6
+All Uploaded PO Are Deleted
+Total Exceptions  : 0
+All Exceptions Deleted
+Rule Format is Added 
+Rule Is Created With Folder: Test_Automation_06092024_0412 And Rule is : "2"000000
+Element completely disappeared (detached from the DOM)
+Files Uploaded Successfully
+Verify On Exceptions Tab 
+Total Exceptions  : 1
+All Exceptions Deleted
+Verify PO Number :-  2071491
+Global Search Results
+PO Number Expected "
+2071491"
+And Actual "
+2071491"
+PO Numbers assertion passed
+
+Shipper Name Expected "
+kasia's deli"
+And Actual "
+kasia's"
+Shipper Name assertion passed 
+
+Shipper Address Expected "
+440 n. oakley blvd., chicago, il 60612"
+And Actual "
+440 n. oakley blvd, chicago, il 60612"
+Shipper Address assertion passed
+
+Destination Address Expected "
+kehe foods texas, 4024 rock quarry rd, dallas tx 75211"
+And Actual "
+4024 rock quarry rd, dallas, tx 75211"
+Destination Address assertion passed
+
+Carrier Name Expected "
+n/a"
+And Actual "
+n/a"
+Carrier Name assertion passed
+
+Sign-On Approval Expected "
+yes"
+And Actual "
+yes"
+Sign-On Approval assertion passed
+
+Verify PO Number :-  2070845
+Global Search Results
+PO Number Expected "
+2070845"
+And Actual "
+2070845"
+PO Numbers assertion passed
+
+Shipper Name Expected "
+dianas bananas inc"
+And Actual "
+dianas bananas inc"
+Shipper Name assertion passed 
+
+Shipper Address Expected "
+2733 w. harrison, alternate, chicago, il 60612"
+And Actual "
+2733 w. harrison, alternate, chicago, il 60612"
+Shipper Address assertion passed
+
+Destination Address Expected "
+n/a"
+And Actual "
+n/a"
+Destination Address assertion passed
+
+Carrier Name Expected "
+khep18 - kehe romeoville fleet"
+And Actual "
+khep18 - kehe romeoville fleet"
+Carrier Name assertion passed
+
+Sign-On Approval Expected "
+n/a"
+And Actual "
+n/a"
+Sign-On Approval assertion passed
+
