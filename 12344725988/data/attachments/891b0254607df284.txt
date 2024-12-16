@@ -1,0 +1,30 @@
+User Login Succsessfully On Live Env: https://app.hellodock.com/
+All Rules Deleted
+Total Uploaded PO: 2
+All Uploaded PO Are Deleted
+Total Exceptions  : 0
+All Exceptions Deleted
+Rule Format is Added 
+Rule Is Created With Folder: Rule_N0_1_'2'00000'1' And Rule is : "2"00000"1"
+Rule Format is Added 
+Rule Is Created With Folder: Rule_N0_2_'2'00000'4' And Rule is : "2"00000"4"
+Rule Format is Added 
+Rule Is Created With Folder: Rule_N0_3_'2'00000'9' And Rule is : "2"00000"9"
+Rule Format is Added 
+Rule Is Created With Folder: Rule_N0_4_'2'00000'5' And Rule is : "2"00000"5"
+Element completely disappeared (detached from the DOM)
+Files Uploaded Successfully
+Verify Created Rule And File Management  :-  Rule_N0_1_'2'00000'1'
+Verify PO Number On File Management :-  2071491
+File Management
+Verify PO Number with Rule:-  2071491
+Global Search Results
+Verify PO Number with Rule:-  2069174
+Global Search Results
+Verify PO Number with Rule:-  2078419
+Global Search Results
+Verify PO Number with Rule:-  2070845
+Global Search Results
+Verify On Exceptions Tab 
+Total Exceptions  : 1
+All Exceptions Deleted
