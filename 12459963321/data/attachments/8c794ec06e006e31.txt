@@ -1,0 +1,46 @@
+User Login Succsessfully On Live Env: https://app.hellodock.com/
+All Rules Deleted
+Total Uploaded PO: 0
+All Uploaded PO Are Deleted
+Total Exceptions  : 2
+All Exceptions Deleted
+Rule Format is Added 
+Rule Is Created With Folder: QA-1 And Rule is : "2"00000"0"
+Rule Format is Added 
+Rule Is Created With Folder: Test_Automation_06092024_0412 And Rule is : "2"00000"5"
+Element completely disappeared (detached from the DOM)
+Files Uploaded Successfully
+Verify Created Rule And File Management  :-  QA-1
+Verify PO Number On File Management :-  2065620
+File Management
+Verify Created Rule And File Management  :-  Test_Automation_06092024_0412
+Verify PO Number On File Management :-  2070845
+File Management
+PO Number Expected "
+2065620"
+And Actual "
+2065620"
+PO Numbers assertion passed
+
+Shipper Name Expected "
+waffle waffle"
+And Actual "
+waffle waffle"
+Shipper Name assertion passed 
+
+Verify File Using Keyword   :-  Waffle Waffle
+Verify PO Number On File Management :-  2065620
+PO Number Expected "
+2070845"
+And Actual "
+2070845"
+PO Numbers assertion passed
+
+Shipper Name Expected "
+dianas bananas inc"
+And Actual "
+dianas bananas inc"
+Shipper Name assertion passed 
+
+Verify File Using Keyword   :-  DIANAS BANANAS INC
+Verify PO Number On File Management :-  2070845

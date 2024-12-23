@@ -1,0 +1,14 @@
+User Login Succsessfully On Live Env: https://app.hellodock.com/
+All Rules Deleted
+Total Uploaded PO: 3
+All Uploaded PO Are Deleted
+Total Exceptions  : 1
+All Exceptions Deleted
+Rule Format is Added 
+Rule Is Created With Folder: Test_Automation_06092024_0412 And Rule is : "2"000000
+Element completely disappeared (detached from the DOM)
+Files Uploaded Successfully
+Report Generated SuccessfullyAnd File Save In download-report Folder
+File downloaded and saved as Generated_Report_23_12_2024__02_33.pdf
+CSV File Uploaded Successfully
+Report downloaded automatically
