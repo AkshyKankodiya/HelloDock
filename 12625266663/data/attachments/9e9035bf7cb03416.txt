@@ -1,0 +1,42 @@
+User Login Succsessfully On Live Env: https://app.hellodock.com/
+All Rules Deleted
+Total Uploaded PO: 10
+All Uploaded PO Are Deleted
+Total Exceptions  : 0
+All Exceptions Deleted
+Rule Format is Added 
+Rule Is Created With Folder: QA-1 And Rule is : "2"000000
+Rule Format is Added 
+Rule Is Created With Folder: QA-2 And Rule is : "2"000000
+Rule Format is Added 
+Rule Is Created With Folder: QA-3 And Rule is : "2"000000
+Rule Format is Added 
+Rule Is Created With Folder: Test_Automation_06092024_0412 And Rule is : “KEHE”0000000000
+All Tags are Deleted
+TAG is Verified :- quarry
+TAG is Verified On Filemenegements Tag :- quarry
+All Tags are Deleted
+TAG is Verified :- seattle
+TAG is Verified On Filemenegements Tag :- seattle
+Element completely disappeared (detached from the DOM)
+Files Uploaded Successfully
+File Count assertion passed.
+Verify Created Rule And File Management  :-  QA-1
+Verify the file count Added  :-  2
+Verify PO Number On File Management :-  2070845
+File Management
+File Count assertion passed.
+Verify Created Rule And File Management  :-  QA-1
+Verify the file count Added  :-  2
+Verify PO Number On File Management :-  2071491
+File Management
+File Count assertion passed.
+Verify Created Rule And File Management  :-  QA-2
+Verify the file count Added  :-  1
+Verify PO Number On File Management :-  2071491
+File Management
+File Count assertion passed.
+TAG is Verified :- seattle
+Verify Created Rule And File Management  :-  QA-3
+TAG is Verified On Filemenegements Tag :- seattle
+Verify the file count Added  :-  0

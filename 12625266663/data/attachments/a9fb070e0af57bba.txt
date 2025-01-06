@@ -1,0 +1,4 @@
+Error waiting for element to be visible: locator.waitFor: Test ended.
+Call log:
+  - waiting for locator('xpath=(//p[normalize-space()=\'KEHE0003987009\'])[1]') to be visible
+
