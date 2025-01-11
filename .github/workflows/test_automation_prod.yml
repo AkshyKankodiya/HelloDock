@@ -1,16 +1,15 @@
-name: HelloDock Smoke Test suite_test2
+name: HelloDock Smoke Test suite
 
 on:
+  schedule:
+  #  - cron: "0 13 * * *"
   workflow_dispatch:
     inputs:
       choice:
         type: choice
         description: Select The Environment URL
         options:
-          - https://app.hellodock.com/
-          - https://dev.hellodock.com/
-          - https://qa.hellodock.com/
-          
+         - https://app.hellodock.com/
 
   
 
@@ -52,19 +51,7 @@ jobs:
           BASE_URL: ${{ github.event.inputs.choice }}  # Pass the selected URL to the tests
         run: npx playwright test --reporter=line,allure-playwright || true
 
-    ## Upload the results as artifacts
-      - name: Upload Playwright test results
-        uses: actions/upload-artifact@v3
-        with:
-          name: test-results
-          path: '**/test-results/**'
-
-      - name: Upload Allure Results
-        uses: actions/upload-artifact@v3
-        with:
-          name: allure-results
-          path: ./allure-results
-
+    
 
       ## Configure AWS Credentials
       - name: Configure AWS credentials
@@ -97,13 +84,15 @@ jobs:
             The build process for your smoke test is completed. Please use below url to view result.
 
             Build URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
-            Environment : ${{ github.event.inputs.choice }}
+            Environment : https://app.hellodock.com/
             Job Status: ${{ job.status }}
             
             Thanks,
-            HelloDock Automation Team    
+            HelloDock Automation Team  
+          cc: michael@allinengineeringconsulting.com,kelseystjohn@hellodock.com,AdamSweis@hellodock.com,matthew@allinengineeringconsulting.com  
           server_address: email-smtp.us-east-2.amazonaws.com
           server_port: 587
           username: ${{ secrets.SMTP_USER }}
           password: ${{ secrets.SMTP_PASSWORD }}
           secure: false
+
