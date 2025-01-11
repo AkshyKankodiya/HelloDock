@@ -12,6 +12,11 @@ on:
           - https://app.hellodock.com/
           - https://qa.hellodock.com/
           - https://dev.hellodock.com/
+          - https://httpstat.us/400
+          - https://httpstat.us/500
+          - https://httpstat.us/404
+          - https://httpstat.us/200
+          
         required: false
         
 jobs:
