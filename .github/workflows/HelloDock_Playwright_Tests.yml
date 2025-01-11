@@ -28,6 +28,7 @@ jobs:
           node-version: '20'
       
       - name: Validate selected environment URL
+        shell: bash
         run: |
             echo "Checking if the environment URL is reachable..."
             STATUS_CODE=$(curl -o /dev/null -s -w "%{http_code}\n" "${{ github.event.inputs.choice }}")
