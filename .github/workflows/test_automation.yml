@@ -1,0 +1,112 @@
+name: HelloDock Smoke Test suite_test2
+
+on:
+  workflow_dispatch:
+    inputs:
+      choice:
+        type: choice
+        description: Select The Environment URL
+        options:
+          - https://dev.hellodock.com/
+          - https://qa.hellodock.com/
+          - https://app.hellodock.com/
+          - https://httpstat.us/400
+          - https://httpstat.us/500
+          - https://httpstat.us/404
+          - https://httpstat.us/200
+
+  
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+
+      - name: Validate selected environment URL
+        shell: bash
+        run: |
+            echo "Checking if the environment URL is reachable..."
+            STATUS_CODE=$(curl -o /dev/null -s -w "%{http_code}\n" "${{ github.event.inputs.choice }}")
+            echo "Status code: $STATUS_CODE"
+            if [ "$STATUS_CODE" -ne 200 ]; then
+              echo "Error: Selected environment URL returned status code $STATUS_CODE."
+              exit 1
+            fi
+            echo "Environment URL is reachable."
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Install Playwright browsers
+        run: npx playwright install
+
+      # Install Allure command line
+      - name: Install Allure
+        run: npm install -g allure-commandline --save-dev
+
+      - name: Run Playwright tests
+        env:
+          BASE_URL: ${{ github.event.inputs.choice }}  # Pass the selected URL to the tests
+        run: npx playwright test --reporter=line,allure-playwright || true
+
+    ## Upload the results as artifacts
+      - name: Upload Playwright test results
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-results
+          path: '**/test-results/**'
+
+      - name: Upload Allure Results
+        uses: actions/upload-artifact@v3
+        with:
+          name: allure-results
+          path: ./allure-results
+
+
+      ## Configure AWS Credentials
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v3
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      ## Upload results to S3
+      - name: Upload Playwright test results to S3
+        run: |
+          aws s3 cp ./test-results/ s3://hellodock-testing/test-results/ --recursive
+
+      - name: Upload Allure report to S3
+        run: |
+          aws s3 cp ./allure-results/ s3://hellodock-testing/allure-results/ --recursive    
+
+      # Send email notification after the build completes
+      - name: Send email notification
+        if: always()  # Ensures email is sent regardless of build success or failure
+        uses: dawidd6/action-send-mail@v3
+        with:
+          from: Hellodock Team <no-reply@hellodock.com>
+          to: rahul@allinengineeringconsulting.com
+          subject: ${{ job.status }} - Test Automation Build Completed
+          body: |
+            Hello Team,
+
+            The build process for your smoke test is completed. Please use below url to view result.
+
+            Build URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+            Environment : ${{ github.event.inputs.choice }}
+            Job Status: ${{ job.status }}
+            
+            Thanks,
+            HelloDock Automation Team    
+          server_address: email-smtp.us-east-2.amazonaws.com
+          server_port: 587
+          username: ${{ secrets.SMTP_USER }}
+          password: ${{ secrets.SMTP_PASSWORD }}
+          secure: false
