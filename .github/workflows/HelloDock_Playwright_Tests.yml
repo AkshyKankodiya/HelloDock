@@ -26,6 +26,17 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
+      
+      - name: Validate selected environment URL
+        run: |
+            echo "Checking if the environment URL is reachable..."
+            STATUS_CODE=$(curl -o /dev/null -s -w "%{http_code}\n" "${{ github.event.inputs.choice }}")
+            echo "Status code: $STATUS_CODE"
+            if [ "$STATUS_CODE" -ne 200 ]; then
+              echo "Error: Selected environment URL returned status code $STATUS_CODE."
+              exit 1
+            fi
+            echo "Environment URL is reachable."
 
       - name: Install dependencies
         run: npm ci
